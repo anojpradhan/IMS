@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100)->unique();
             $table->text('description');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 
