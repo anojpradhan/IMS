@@ -20,9 +20,6 @@ class Product extends Model
         'quantity',
     ];
 
-    /**
-     * Relationship: Product belongs to a Subcategory (Category with parent_id != null)
-     */
     public function subcategory()
     {
         return $this->belongsTo(Category::class, 'subcategory_id');

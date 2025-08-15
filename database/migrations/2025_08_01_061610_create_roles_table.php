@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
+
+            // Organization link (null for global/system roles)
             $table->foreignId('organization_id')->nullable()->constrained('organizations')->onDelete('cascade');
-            $table->string('name', 100)->unique();
-            $table->text('description');
+
+            $table->string('name');
+            $table->text('description')->nullable();
+
             $table->timestamps();
         });
     }
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('roles');
     }
 };

@@ -1,26 +1,28 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+
+import { Head } from "@inertiajs/react";
+import Sidebar from "@/Components/Sidebar";
 
 export default function Dashboard() {
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
-                </h2>
-            }
-        >
+        <>
             <Head title="Dashboard" />
+            <div className="flex">
+                {/* Sidebar */}
+                <Sidebar />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            You're logged in!
-                        </div>
+                {/* Main Content */}
+                <main className="flex-1 bg-gray-100 min-h-screen p-6">
+                    <div className="bg-white shadow-sm sm:rounded-lg p-6">
+                        <h3 className="text-lg font-bold mb-4">
+                            Welcome to IMS Dashboard
+                        </h3>
+                        <p className="text-gray-700">
+                            Select a section from the sidebar to manage your
+                            inventory data.
+                        </p>
                     </div>
-                </div>
+                </main>
             </div>
-        </AuthenticatedLayout>
+            </>
     );
 }
