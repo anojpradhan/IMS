@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 use App\Models\Subcategory;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class SubcategoryController extends Controller
@@ -39,6 +38,7 @@ class SubcategoryController extends Controller
             'category_id' => $request->category_id,
             'name' => $request->name,
         ]);
+
 
         return redirect()->route('subcategories.index')->with('success', 'Subcategory created!');
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 // use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -23,21 +24,22 @@ class CategoryController extends Controller
     {
         return Inertia::render('Categories/Create');
     }
-
 public function store(Request $request)
 {
-    // dd($request);
     $request->validate([
         'name' => 'required|string|max:100',
         'description' => 'required|string',
     ]);
-    
+
+    $user = Auth::user();
+
     Category::create([
         'name' => $request->name,
         'description' => $request->description,
+        'organization_id' => $user->organization_id, // link to org
         'created_at' => now(),
     ]);
-    
+
     return redirect()->route('categories.index')->with('success', 'Category created!');
 }
 
