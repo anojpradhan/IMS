@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubcategoryController;
@@ -44,6 +45,34 @@ Route::middleware('auth')->group(function () {
         
         Route::resource('categories', CategoryController::class);
         Route::resource('subcategories', SubcategoryController::class);
+
+    // Route for fetching subcategories of a category
+    Route::get('/categories/{category}/subcategories', [ProductController::class, 'getSubcategories']);
+
+
+            Route::get('/products', [ProductController::class, 'index'])
+        ->name('products.index');
+
+    // Show form to create a new product
+    Route::get('/products/create', [ProductController::class, 'create']) // can reuse edit form if desired
+        ->name('products.create');
+
+    // Store a new product
+    Route::post('/products', [ProductController::class, 'store'])
+        ->name('products.store');
+
+    // Show form to edit existing product
+    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])
+        ->name('products.edit');
+
+    // Update existing product
+    Route::put('/products/{product}', [ProductController::class, 'update'])
+        ->name('products.update');
+
+    // Delete product
+    Route::delete('/products/{product}', [ProductController::class, 'destroy'])
+        ->name('products.destroy');
+
 });
 
 require __DIR__.'/auth.php';
