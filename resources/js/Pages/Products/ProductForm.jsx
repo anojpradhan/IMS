@@ -10,9 +10,6 @@ export default function ProductForm({ product, categories }) {
         description: product?.description || "",
         category_id: product?.subcategory?.category_id || "",
         subcategory_id: product?.subcategory_id || "",
-        selling_price: product?.selling_price || "",
-        buying_price: product?.buying_price || "",
-        quantity: product?.quantity || "",
     });
 
     useEffect(() => {
@@ -115,45 +112,6 @@ export default function ProductForm({ product, categories }) {
                             )}
                         </div>
 
-                        {/* Selling Price */}
-                        <div>
-                            <label className="block mb-1 font-medium">Selling Price</label>
-                            <input
-                                type="number"
-                                value={data.selling_price}
-                                onChange={(e) => setData("selling_price", e.target.value)}
-                                className="w-full border rounded-lg p-2"
-                            />
-                            {errors.selling_price && (
-                                <p className="text-red-600 text-sm">{errors.selling_price}</p>
-                            )}
-                        </div>
-
-                        {/* Buying Price */}
-                        <div>
-                            <label className="block mb-1 font-medium">Buying Price</label>
-                            <input
-                                type="number"
-                                value={data.buying_price}
-                                onChange={(e) => setData("buying_price", e.target.value)}
-                                className="w-full border rounded-lg p-2"
-                            />
-                            {errors.buying_price && (
-                                <p className="text-red-600 text-sm">{errors.buying_price}</p>
-                            )}
-                        </div>
-
-                        {/* Quantity */}
-                        <div>
-                            <label className="block mb-1 font-medium">Quantity</label>
-                            <input
-                                type="number"
-                                value={data.quantity}
-                                onChange={(e) => setData("quantity", e.target.value)}
-                                className="w-full border rounded-lg p-2"
-                            />
-                            {errors.quantity && <p className="text-red-600 text-sm">{errors.quantity}</p>}
-                        </div>
 
                         <button
                             type="submit"

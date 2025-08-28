@@ -59,9 +59,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'subcategory_id' => 'required|exists:sub_categories,id',
-            'selling_price' => 'required|numeric',
-            'buying_price' => 'required|numeric',
-            'quantity' => 'required|integer',
+
         ]);
 
         $subcategory = Subcategory::with('category')->findOrFail($request->subcategory_id);
@@ -70,7 +68,7 @@ class ProductController extends Controller
             abort(403, 'Unauthorized: Subcategory does not belong to your organization.');
         }
 
-        Product::create($request->only(['name','description','subcategory_id','selling_price','buying_price','quantity']));
+        Product::create($request->only(['name','description','subcategory_id']));
 
         return redirect()->route('products.index')->with('success', 'Product created!');
     }
@@ -104,9 +102,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'subcategory_id' => 'required|exists:sub_categories,id',
-            'selling_price' => 'required|numeric',
-            'buying_price' => 'required|numeric',
-            'quantity' => 'required|integer',
+
         ]);
 
         $subcategory = Subcategory::with('category')->findOrFail($request->subcategory_id);
@@ -115,7 +111,7 @@ class ProductController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $product->update($request->only(['name','description','subcategory_id','selling_price','buying_price','quantity']));
+        $product->update($request->only(['name','description','subcategory_id']));
 
         return redirect()->route('products.index')->with('success', 'Product updated!');
     }

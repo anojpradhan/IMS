@@ -8,6 +8,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\SupplierController;
+use App\Models\Supplier;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -72,6 +74,13 @@ Route::middleware('auth')->group(function () {
     // Delete product
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])
         ->name('products.destroy');
+
+
+
+
+        // Supplier
+
+            Route::resource('suppliers', SupplierController::class);
 
 });
 
