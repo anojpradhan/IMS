@@ -1,87 +1,62 @@
 <?php
 
-// use App\Http\Controllers\BackendController\CategoryController;
-
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\SupplierController;
-use App\Models\Supplier;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render(('Home'));
-});
+// Home and Dashboard
+Route::get('/', fn() => Inertia::render('Home'));
+Route::get('/dashboard', fn() => Inertia::render('Dashboard'))
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
+// API Routes
+Route::get('/api/roles', [RoleController::class, 'getroles']);
 
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
-
-
-
-Route::get('/api/roles',[RoleController::class, 'getroles']);
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Profile Routes
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 
-// Organizations  
-        Route::get('/organization/create', [OrganizationController::class, 'form'])
-        ->name('organizations.create');
-        Route::post('/organization', [OrganizationController::class, 'store'])
-        ->name('organizations.store');
-        Route::get('/organization/edit', [OrganizationController::class, 'form'])
-        ->name('organizations.edit');
-        Route::put('/organization', [OrganizationController::class, 'update'])
-        ->name('organizations.update');
-        
-        Route::resource('categories', CategoryController::class);
-        Route::resource('subcategories', SubcategoryController::class);
+    // Organization Routes
+    Route::prefix('organization')->group(function () {
+        Route::get('/create', [OrganizationController::class, 'form'])->name('organizations.create');
+        Route::post('/', [OrganizationController::class, 'store'])->name('organizations.store');
+        Route::get('/edit', [OrganizationController::class, 'form'])->name('organizations.edit');
+        Route::put('/', [OrganizationController::class, 'update'])->name('organizations.update');
+    });
 
-    // Route for fetching subcategories of a category
+    // Categories & Subcategories
+    Route::resource('categories', CategoryController::class);
+    Route::resource('subcategories', SubcategoryController::class);
     Route::get('/categories/{category}/subcategories', [ProductController::class, 'getSubcategories']);
 
+    // Products
+    Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('products.index');
+        Route::get('/create', [ProductController::class, 'create'])->name('products.create');
+        Route::post('/', [ProductController::class, 'store'])->name('products.store');
+        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+        Route::put('/{product}', [ProductController::class, 'update'])->name('products.update');
+        Route::delete('/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    });
 
-            Route::get('/products', [ProductController::class, 'index'])
-        ->name('products.index');
-
-    // Show form to create a new product
-    Route::get('/products/create', [ProductController::class, 'create']) // can reuse edit form if desired
-        ->name('products.create');
-
-    // Store a new product
-    Route::post('/products', [ProductController::class, 'store'])
-        ->name('products.store');
-
-    // Show form to edit existing product
-    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])
-        ->name('products.edit');
-
-    // Update existing product
-    Route::put('/products/{product}', [ProductController::class, 'update'])
-        ->name('products.update');
-
-    // Delete product
-    Route::delete('/products/{product}', [ProductController::class, 'destroy'])
-        ->name('products.destroy');
-
-
-
-
-        // Supplier
-
-            Route::resource('suppliers', SupplierController::class);
-
+    // Suppliers & Purchases
+    Route::resources([
+        'suppliers' => SupplierController::class,
+        'purchases' => PurchaseController::class,
+    ]);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -11,42 +11,30 @@ use Inertia\Inertia;
 
 class ProductController extends Controller
 {
-    // List products
+    // List products (scoped by org)
     public function index()
     {
         $user = Auth::user();
 
         $products = Product::with('subcategory.category')
-            ->whereHas('subcategory', function ($q) use ($user) {
-                $q->whereHas('category', function ($q2) use ($user) {
-                    $q2->where('organization_id', $user->organization_id);
-                });
-            })
+            ->whereHas('subcategory.category', fn($q) => $q->where('organization_id', $user->organization_id))
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('Products/Index', [
-            'products' => $products,
-        ]);
+        return Inertia::render('Products/Index', compact('products'));
     }
 
     // Show create form
     public function create()
     {
-        $user = Auth::user();
-
-        $categories = Category::with('subcategories')
-            ->where('organization_id', $user->organization_id)
-            ->get();
-
-        return Inertia::render('Products/ProductForm', [
-            'categories' => $categories,
-        ]);
+        $categories = $this->getOrgCategories();
+        return Inertia::render('Products/ProductForm', compact('categories'));
     }
 
-    // Fetch subcategories dynamically (AJAX)
+    // Fetch subcategories dynamically (AJAX, scoped by org)
     public function getSubcategories(Category $category)
     {
+        $this->authorizeCategory($category);
         return response()->json($category->subcategories);
     }
 
@@ -55,20 +43,16 @@ class ProductController extends Controller
     {
         $user = Auth::user();
 
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'subcategory_id' => 'required|exists:sub_categories,id',
-
         ]);
 
-        $subcategory = Subcategory::with('category')->findOrFail($request->subcategory_id);
+        $subcategory = Subcategory::with('category')->findOrFail($data['subcategory_id']);
+        $this->authorizeCategory($subcategory->category);
 
-        if ($subcategory->category->organization_id !== $user->organization_id) {
-            abort(403, 'Unauthorized: Subcategory does not belong to your organization.');
-        }
-
-        Product::create($request->only(['name','description','subcategory_id']));
+        Product::create($data);
 
         return redirect()->route('products.index')->with('success', 'Product created!');
     }
@@ -76,42 +60,30 @@ class ProductController extends Controller
     // Show edit form
     public function edit(Product $product)
     {
-        $user = Auth::user();
         $product->load('subcategory.category');
+        $this->authorizeProduct($product);
 
-        if ($product->subcategory->category->organization_id !== $user->organization_id) {
-            abort(403, 'Unauthorized');
-        }
+        $categories = $this->getOrgCategories();
 
-        $categories = Category::with('subcategories')
-            ->where('organization_id', $user->organization_id)
-            ->get();
-
-        return Inertia::render('Products/ProductForm', [
-            'product' => $product,
-            'categories' => $categories,
-        ]);
+        return Inertia::render('Products/ProductForm', compact('product', 'categories'));
     }
 
     // Update product
     public function update(Request $request, Product $product)
     {
-        $user = Auth::user();
+        $product->load('subcategory.category');
+        $this->authorizeProduct($product);
 
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'subcategory_id' => 'required|exists:sub_categories,id',
-
         ]);
 
-        $subcategory = Subcategory::with('category')->findOrFail($request->subcategory_id);
+        $subcategory = Subcategory::with('category')->findOrFail($data['subcategory_id']);
+        $this->authorizeCategory($subcategory->category);
 
-        if ($subcategory->category->organization_id !== $user->organization_id) {
-            abort(403, 'Unauthorized');
-        }
-
-        $product->update($request->only(['name','description','subcategory_id']));
+        $product->update($data);
 
         return redirect()->route('products.index')->with('success', 'Product updated!');
     }
@@ -119,14 +91,38 @@ class ProductController extends Controller
     // Delete product
     public function destroy(Product $product)
     {
-        $user = Auth::user();
         $product->load('subcategory.category');
-
-        if ($product->subcategory->category->organization_id !== $user->organization_id) {
-            abort(403, 'Unauthorized');
-        }
+        $this->authorizeProduct($product);
 
         $product->delete();
+
         return redirect()->route('products.index')->with('success', 'Product deleted!');
+    }
+
+    // Ensure product belongs to user's org
+    private function authorizeProduct(Product $product)
+    {
+        $user = Auth::user();
+        if ($product->subcategory->category->organization_id !== $user->organization_id) {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
+    // Ensure category belongs to user's org
+    private function authorizeCategory(Category $category)
+    {
+        $user = Auth::user();
+        if ($category->organization_id !== $user->organization_id) {
+            abort(403, 'Unauthorized');
+        }
+    }
+
+    // Fetch categories with subcategories for the current user's org
+    private function getOrgCategories()
+    {
+        $user = Auth::user();
+        return Category::with('subcategories')
+            ->where('organization_id', $user->organization_id)
+            ->get();
     }
 }

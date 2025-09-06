@@ -19,8 +19,11 @@ return new class extends Migration
             $table->foreignId('product_id')
                   ->constrained('products')
                   ->onDelete('cascade');
-            $table->integer('quantity');
+                  $table->integer('quantity');
+                  $table->enum('payment_status', ['paid', 'unpaid', 'partial'])->default('unpaid');
             $table->decimal('purchase_price', 15, 2);
+            $table->decimal('remain_amount', 15, 2);
+
             $table->timestamps();
         });
     }

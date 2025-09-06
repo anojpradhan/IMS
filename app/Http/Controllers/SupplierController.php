@@ -10,13 +10,21 @@ use Inertia\Inertia;
 class SupplierController extends Controller
 {
     /**
+     * Helper to authorize organization ownership.
+     */
+    private function authorizeOrg($model)
+    {
+        if ($model->organization_id !== Auth::user()->organization_id) {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
+    /**
      * Display a listing of the suppliers for the user's organization.
      */
     public function index()
     {
-        $organizationId = Auth::user()->organization_id;
-
-        $suppliers = Supplier::where('organization_id', $organizationId)
+        $suppliers = Supplier::where('organization_id', Auth::user()->organization_id)
             ->latest()
             ->paginate(10);
 
@@ -38,8 +46,6 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        $organizationId = Auth::user()->organization_id;
-
         $validated = $request->validate([
             'name'           => 'required|string|max:255',
             'contact_person' => 'nullable|string|max:255',
@@ -48,7 +54,7 @@ class SupplierController extends Controller
             'address'        => 'required|string',
         ]);
 
-        $validated['organization_id'] = $organizationId;
+        $validated['organization_id'] = Auth::user()->organization_id;
 
         Supplier::create($validated);
 
@@ -58,12 +64,9 @@ class SupplierController extends Controller
     /**
      * Show the form for editing the specified supplier.
      */
-    public function edit($id)
+    public function edit(Supplier $supplier)
     {
-        $organizationId = Auth::user()->organization_id;
-        $supplier = Supplier::where('id', $id)
-            ->where('organization_id', $organizationId)
-            ->firstOrFail();
+        $this->authorizeOrg($supplier);
 
         return Inertia::render('Suppliers/Edit', [
             'supplier' => $supplier,
@@ -73,13 +76,9 @@ class SupplierController extends Controller
     /**
      * Update the specified supplier in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Supplier $supplier)
     {
-        $organizationId = Auth::user()->organization_id;
-
-        $supplier = Supplier::where('id', $id)
-            ->where('organization_id', $organizationId)
-            ->firstOrFail();
+        $this->authorizeOrg($supplier);
 
         $validated = $request->validate([
             'name'           => 'required|string|max:255',
@@ -97,13 +96,9 @@ class SupplierController extends Controller
     /**
      * Remove the specified supplier from storage.
      */
-    public function destroy($id)
+    public function destroy(Supplier $supplier)
     {
-        $organizationId = Auth::user()->organization_id;
-
-        $supplier = Supplier::where('id', $id)
-            ->where('organization_id', $organizationId)
-            ->firstOrFail();
+        $this->authorizeOrg($supplier);
 
         $supplier->delete();
 

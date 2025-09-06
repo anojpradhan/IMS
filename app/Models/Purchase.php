@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Purchase extends Model
 {
 
+    protected $casts = [
+        'purchase_date' => 'date:Y-m-d',
+    ];
+
     protected $fillable = [
         'organization_id',
         'supplier_id',

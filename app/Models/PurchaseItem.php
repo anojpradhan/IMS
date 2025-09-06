@@ -10,7 +10,9 @@ class PurchaseItem extends Model
         'purchase_id',
         'product_id',
         'quantity',
+        'payment_status',
         'purchase_price',
+        'remain_amount'
     ];
 
     // Relationships
