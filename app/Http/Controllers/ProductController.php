@@ -94,9 +94,15 @@ class ProductController extends Controller
         $product->load('subcategory.category');
         $this->authorizeProduct($product);
 
+        // Set related sale_items inactive
+        $product->salesItems()->update(['is_active' => false]);
+
+        // Set related purchase_items inactive
+        $product->purchaseItems()->update(['is_active' => false]);
         $product->delete();
 
-        return redirect()->route('products.index')->with('success', 'Product deleted!');
+
+        return redirect()->route('products.index')->with('success', 'Product deactivated and related items set inactive!');
     }
 
     // Ensure product belongs to user's org

@@ -37,7 +37,6 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-
         $validated = $this->validatePurchase($request);
 
         DB::transaction(function () use ($validated, $user, &$purchase) {
@@ -52,7 +51,6 @@ class PurchaseController extends Controller
             ]);
 
             [$purchaseStatus, $totalRemain] = $this->processPurchaseItems($purchase, $validated['items'], $user);
-
             $purchase->update(['payment_status' => $purchaseStatus, 'remain_amount' => $totalRemain]);
         });
 
@@ -100,7 +98,6 @@ class PurchaseController extends Controller
             ]);
 
             [$purchaseStatus, $totalRemain] = $this->processPurchaseItems($purchase, $validated['items'], $user);
-
             $purchase->update(['payment_status' => $purchaseStatus, 'remain_amount' => $totalRemain]);
         });
 
@@ -177,17 +174,9 @@ class PurchaseController extends Controller
 
     private function updateProductStock(Product $product, int $qty, float $price)
     {
-        $oldQty = $product->quantity ?? 0;
-        $oldPrice = $product->buying_price ?? 0;
-        $totalQty = $oldQty + $qty;
-
-        $avgPrice = $totalQty > 0
-            ? (($oldQty * $oldPrice) + ($qty * $price)) / $totalQty
-            : $price;
-
         $product->update([
-            'quantity' => $totalQty,
-            'buying_price' => $avgPrice,
+            'quantity'     => ($product->quantity ?? 0) + $qty,
+            'buying_price' => $price, // Latest price only
         ]);
     }
 
@@ -216,13 +205,12 @@ class PurchaseController extends Controller
             ->get();
 
         $totalQty = $remainingItems->sum('quantity');
-        $totalCost = $remainingItems->sum(fn($item) => $item->quantity * $item->purchase_price);
 
-        $avgPrice = $totalQty > 0 ? $totalCost / $totalQty : 0;
+        $latestPrice = $remainingItems->last()?->purchase_price ?? 0;
 
         $product->update([
-            'quantity' => $totalQty,
-            'buying_price' => $avgPrice,
+            'quantity'     => $totalQty,
+            'buying_price' => $latestPrice,
         ]);
     }
 

@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +58,8 @@ Route::middleware('auth')->group(function () {
     Route::resources([
         'suppliers' => SupplierController::class,
         'purchases' => PurchaseController::class,
+        'customers' => CustomerController::class,
+        'sales'=>SaleController::class,
     ]);
 });
 
