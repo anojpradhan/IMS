@@ -15,9 +15,6 @@ use Inertia\Inertia;
 
 // Home and Dashboard
 Route::get('/', fn() => Inertia::render('Home'));
-Route::get('/dashboard', fn() => Inertia::render('Dashboard'))
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
 // API Routes
 Route::get('/api/roles', [RoleController::class, 'getroles']);
