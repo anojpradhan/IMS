@@ -1,93 +1,157 @@
-import React from 'react';
-import { useForm, usePage, Link } from '@inertiajs/react';
+import React from "react";
+import { useForm, usePage, Link, Head } from "@inertiajs/react";
+import Sidebar from "@/Components/Sidebar";
 
 export default function Edit() {
-  const { supplier, errors } = usePage().props;
+    const { supplier, errors } = usePage().props;
 
-  const { data, setData, put, processing } = useForm({
-    name: supplier.name || '',
-    contact_person: supplier.contact_person || '',
-    phone: supplier.phone || '',
-    email: supplier.email || '',
-    address: supplier.address || '',
-  });
+    const { data, setData, put, processing } = useForm({
+        name: supplier.name || "",
+        contact_person: supplier.contact_person || "",
+        phone: supplier.phone || "",
+        email: supplier.email || "",
+        address: supplier.address || "",
+    });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    put(route('suppliers.update', supplier.id));
-  };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        put(route("suppliers.update", supplier.id));
+    };
 
-  return (
-    <div className="p-6 max-w-lg mx-auto">
-      <h1 className="text-xl font-bold mb-4">Edit Supplier</h1>
+    return (
+        <>
+            <Head title="Suppliers" />
+            <div className="flex min-h-screen bg-white">
+                <Sidebar />
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="text"
-          name="name"
-          placeholder="Supplier Name"
-          value={data.name}
-          onChange={(e) => setData('name', e.target.value)}
-          className="border p-2 rounded"
-        />
-        {errors.name && <div className="text-red-500">{errors.name}</div>}
+                <div className="flex-1 flex justify-center items-start p-8">
+                    <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+                        <h1 className="text-2xl font-bold text-blue-700 mb-6">
+                            Edit Supplier
+                        </h1>
 
-        <input
-          type="text"
-          name="contact_person"
-          placeholder="Contact Person"
-          value={data.contact_person}
-          onChange={(e) => setData('contact_person', e.target.value)}
-          className="border p-2 rounded"
-        />
-        {errors.contact_person && <div className="text-red-500">{errors.contact_person}</div>}
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                            {/* Supplier Name */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Supplier Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={data.name}
+                                    onChange={(e) => setData("name", e.target.value)}
+                                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    placeholder="Enter supplier name"
+                                />
+                                {errors.name && (
+                                    <div className="text-red-500 text-sm mt-1">
+                                        {errors.name}
+                                    </div>
+                                )}
+                            </div>
 
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone"
-          value={data.phone}
-          onChange={(e) => setData('phone', e.target.value)}
-          className="border p-2 rounded"
-        />
-        {errors.phone && <div className="text-red-500">{errors.phone}</div>}
+                            {/* Contact Person */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Contact Person
+                                </label>
+                                <input
+                                    type="text"
+                                    name="contact_person"
+                                    value={data.contact_person}
+                                    onChange={(e) => setData("contact_person", e.target.value)}
+                                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    placeholder="Enter contact person"
+                                />
+                                {errors.contact_person && (
+                                    <div className="text-red-500 text-sm mt-1">
+                                        {errors.contact_person}
+                                    </div>
+                                )}
+                            </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={data.email}
-          onChange={(e) => setData('email', e.target.value)}
-          className="border p-2 rounded"
-        />
-        {errors.email && <div className="text-red-500">{errors.email}</div>}
+                            {/* Phone */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Phone
+                                </label>
+                                <input
+                                    type="text"
+                                    name="phone"
+                                    value={data.phone}
+                                    onChange={(e) => setData("phone", e.target.value)}
+                                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    placeholder="Enter phone number"
+                                />
+                                {errors.phone && (
+                                    <div className="text-red-500 text-sm mt-1">
+                                        {errors.phone}
+                                    </div>
+                                )}
+                            </div>
 
-        <textarea
-          name="address"
-          placeholder="Address"
-          value={data.address}
-          onChange={(e) => setData('address', e.target.value)}
-          className="border p-2 rounded"
-        />
-        {errors.address && <div className="text-red-500">{errors.address}</div>}
+                            {/* Email */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={data.email}
+                                    onChange={(e) => setData("email", e.target.value)}
+                                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    placeholder="Enter email"
+                                />
+                                {errors.email && (
+                                    <div className="text-red-500 text-sm mt-1">
+                                        {errors.email}
+                                    </div>
+                                )}
+                            </div>
 
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white p-2 rounded"
-            disabled={processing}
-          >
-            {processing ? 'Updating...' : 'Update'}
-          </button>
+                            {/* Address */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Address
+                                </label>
+                                <textarea
+                                    name="address"
+                                    value={data.address}
+                                    onChange={(e) => setData("address", e.target.value)}
+                                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    placeholder="Enter address"
+                                    rows="3"
+                                />
+                                {errors.address && (
+                                    <div className="text-red-500 text-sm mt-1">
+                                        {errors.address}
+                                    </div>
+                                )}
+                            </div>
 
-          <Link
-            href={route('suppliers.index')}
-            className="bg-gray-500 text-white p-2 rounded"
-          >
-            Cancel
-          </Link>
-        </div>
-      </form>
-    </div>
-  );
+                            {/* Buttons */}
+                            <div className="flex gap-3 mt-4">
+                                <button
+                                    type="submit"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition disabled:opacity-70"
+                                    disabled={processing}
+                                >
+                                    {processing ? "Updating..." : "Update"}
+                                </button>
+
+                                <Link
+                                    href={route("suppliers.index")}
+                                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow transition"
+                                >
+                                    Cancel
+                                </Link>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 }

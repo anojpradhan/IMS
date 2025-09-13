@@ -15,6 +15,7 @@ use Inertia\Inertia;
 
 // Home and Dashboard
 Route::get('/', fn() => Inertia::render('Home'));
+Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
 // API Routes
 Route::get('/api/roles', [RoleController::class, 'getroles']);
@@ -34,6 +35,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [OrganizationController::class, 'store'])->name('organizations.store');
         Route::get('/edit', [OrganizationController::class, 'form'])->name('organizations.edit');
         Route::put('/', [OrganizationController::class, 'update'])->name('organizations.update');
+        Route::delete('/destroy', [OrganizationController::class, 'destroy'])
+            ->name('organizations.destroy');
     });
 
     // Categories & Subcategories
@@ -56,7 +59,7 @@ Route::middleware('auth')->group(function () {
         'suppliers' => SupplierController::class,
         'purchases' => PurchaseController::class,
         'customers' => CustomerController::class,
-        'sales'=>SaleController::class,
+        'sales' => SaleController::class,
     ]);
 });
 

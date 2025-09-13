@@ -14,7 +14,7 @@ return new class extends Migration
                   ->nullable()
                   ->after('id')
                   ->constrained('organizations')
-                  ->cascadeOnDelete();
+                  ->nullOnDelete();
 
             $table->foreignId('role_id')
                   ->nullable()

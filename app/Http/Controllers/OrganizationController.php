@@ -74,4 +74,20 @@ class OrganizationController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Organization updated successfully! ✅');
     }
+
+    public function destroy()
+    {
+        $user = Auth::user();
+        $organization = $user->organization;
+
+        if ($organization) {
+            // Optionally, you might want to handle related users or data here
+            $organization->delete();
+            $user->organization_id = null;
+            $user->role_id = null; // or set to a default role
+            $user->save();
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Organization deleted successfully! 🗑️');
+    }
 }

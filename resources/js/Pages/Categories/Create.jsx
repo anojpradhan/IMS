@@ -15,78 +15,90 @@ export default function Create() {
 
     return (
         <>
-            <Head title="Edit" />
-            <div className="flex">
+            <Head title="Categories" />
+            <div className="flex flex-col md:flex-row min-h-screen">
+                {/* Sidebar */}
                 <Sidebar />
-                <div className="p-6 max-w-lg mx-auto">
-                    <h1 className="text-2xl font-bold mb-4">Create Category</h1>
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-4">
-                            <label
-                                className="block mb-1 font-semibold"
-                                htmlFor="name"
-                            >
-                                Name
-                            </label>
-                            <input
-                                id="name"
-                                name="name"
-                                value={data.name}
-                                onChange={(e) =>
-                                    setData("name", e.target.value)
-                                }
-                                className="w-full border border-gray-300 rounded px-3 py-2"
-                                type="text"
-                                disabled={processing}
-                            />
-                            {errors.name && (
-                                <div className="text-red-600 mt-1 text-sm">
-                                    {errors.name}
-                                </div>
-                            )}
-                        </div>
+                {/* Main Content */}
+                <div className="flex-1 bg-gray-100 p-6 flex items-center justify-center">
+                    <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-lg">
+                        <h1 className="text-2xl font-bold mb-6 text-gray-800">
+                            Create Category
+                        </h1>
 
-                        <div className="mb-4">
-                            <label
-                                className="block mb-1 font-semibold"
-                                htmlFor="description"
-                            >
-                                Description
-                            </label>
-                            <textarea
-                                id="description"
-                                name="description"
-                                value={data.description}
-                                onChange={(e) =>
-                                    setData("description", e.target.value)
-                                }
-                                className="w-full border border-gray-300 rounded px-3 py-2"
-                                rows={4}
-                                disabled={processing}
-                            />
-                            {errors.description && (
-                                <div className="text-red-600 mt-1 text-sm">
-                                    {errors.description}
-                                </div>
-                            )}
-                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            {/* Name */}
+                            <div>
+                                <label
+                                    className="block mb-1 font-semibold text-gray-700"
+                                    htmlFor="name"
+                                >
+                                    Name
+                                </label>
+                                <input
+                                    id="name"
+                                    name="name"
+                                    value={data.name}
+                                    onChange={(e) =>
+                                        setData("name", e.target.value)
+                                    }
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    type="text"
+                                    disabled={processing}
+                                />
+                                {errors.name && (
+                                    <div className="text-red-600 mt-1 text-sm">
+                                        {errors.name}
+                                    </div>
+                                )}
+                            </div>
 
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                        >
-                            Create
-                        </button>
+                            {/* Description */}
+                            <div>
+                                <label
+                                    className="block mb-1 font-semibold text-gray-700"
+                                    htmlFor="description"
+                                >
+                                    Description
+                                </label>
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    value={data.description}
+                                    onChange={(e) =>
+                                        setData("description", e.target.value)
+                                    }
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    rows={4}
+                                    disabled={processing}
+                                />
+                                {errors.description && (
+                                    <div className="text-red-600 mt-1 text-sm">
+                                        {errors.description}
+                                    </div>
+                                )}
+                            </div>
 
-                        <Link
-                            href={route("categories.index")}
-                            className="ml-4 text-gray-600 hover:underline"
-                        >
-                            Cancel
-                        </Link>
-                    </form>
+                            {/* Buttons */}
+                            <div className="flex items-center gap-4">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition disabled:opacity-50"
+                                >
+                                    {processing ? "Creating..." : "Create"}
+                                </button>
+
+                                <Link
+                                    href={route("categories.index")}
+                                    className="text-gray-600 hover:text-gray-800 underline"
+                                >
+                                    Cancel
+                                </Link>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </>

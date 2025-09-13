@@ -14,41 +14,41 @@ export default function Index() {
 
     return (
         <>
-            <Head title="Dashboard" />
-            <div className="flex">
+            <Head title="Categories" />
+            <div className="flex flex-col md:flex-row min-h-screen">
                 <Sidebar />
-                <main className="flex-1 p-6 max-w-6xl mx-auto w-full">
-                 
-                        <div className="mb-6 flex items-center justify-between">
-                            <h1 className="text-2xl font-bold">
-                                Categories
-                            </h1>
-                            <a
-                                href={route("categories.create")}
-                                className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-                            >
-                                + Create New
-                            </a>
+
+                <main className="flex-1 bg-gray-100 p-6">
+                    {/* Header */}
+                    <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                        <h1 className="text-2xl font-bold text-gray-800">
+                            Categories
+                        </h1>
+                        <a
+                            href={route("categories.create")}
+                            className="rounded-lg bg-blue-600 px-4 py-2 text-white shadow hover:bg-blue-700 transition"
+                        >
+                            + Create New
+                        </a>
+                    </div>
+
+                    {/* Flash Message */}
+                    {flash?.success && (
+                        <div className="mb-4 p-3 bg-green-100 border border-green-300 text-green-800 rounded">
+                            {flash.success}
                         </div>
+                    )}
 
-                        {flash?.success && (
-                            <div className="mb-4 p-3 bg-green-200 text-green-800 rounded">
-                                {flash.success}
-                            </div>
-                        )}
-
-                        <table className="w-full border-collapse border border-gray-300">
-                            <thead>
+                    {/* Table */}
+                    <div className="overflow-x-auto bg-white shadow rounded-lg">
+                        <table className="w-full border-collapse">
+                            <thead className="bg-blue-600 text-white">
                                 <tr>
-                                    <th className="border border-gray-300 p-2">
-                                        Name
-                                    </th>
-                                    <th className="border border-gray-300 p-2">
+                                    <th className="p-3 text-left">Name</th>
+                                    <th className="p-3 text-left">
                                         Description
                                     </th>
-                                    <th className="border border-gray-300 p-2">
-                                        Actions
-                                    </th>
+                                    <th className="p-3 text-left">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -56,7 +56,7 @@ export default function Index() {
                                     <tr>
                                         <td
                                             colSpan="3"
-                                            className="text-center p-4"
+                                            className="text-center p-6 text-gray-600"
                                         >
                                             No categories found.
                                         </td>
@@ -64,14 +64,15 @@ export default function Index() {
                                 )}
 
                                 {categories.data.map((category) => (
-                                    <tr key={category.id}>
-                                        <td className="border border-gray-300 p-2">
-                                            {category.name}
-                                        </td>
-                                        <td className="border border-gray-300 p-2">
+                                    <tr
+                                        key={category.id}
+                                        className="border-b hover:bg-gray-50"
+                                    >
+                                        <td className="p-3">{category.name}</td>
+                                        <td className="p-3 text-gray-700">
                                             {category.description}
                                         </td>
-                                        <td className="border border-gray-300 p-2 space-x-2">
+                                        <td className="p-3 space-x-3">
                                             <Link
                                                 href={route(
                                                     "categories.edit",
@@ -94,27 +95,29 @@ export default function Index() {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
 
-                        {/* Pagination */}
-                        <div className="mt-4">
-                            {categories.links &&
-                                categories.links.map((link, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => Inertia.visit(link.url)}
-                                        disabled={!link.url}
-                                        className={`mx-1 px-3 py-1 rounded ${
-                                            link.active
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-gray-200"
-                                        }`}
-                                        dangerouslySetInnerHTML={{
-                                            __html: link.label,
-                                        }}
-                                    />
-                                ))}
-                        </div>
-                 
+                    {/* Pagination */}
+                    <div className="mt-6 flex flex-wrap gap-2">
+                        {categories.links &&
+                            categories.links.map((link, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() =>
+                                        link.url && Inertia.visit(link.url)
+                                    }
+                                    disabled={!link.url}
+                                    className={`px-3 py-1 rounded-md text-sm ${
+                                        link.active
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    }`}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
+                            ))}
+                    </div>
                 </main>
             </div>
         </>

@@ -12,7 +12,7 @@ import {
     ArrowRight,
     CheckCircle,
 } from "lucide-react";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 
 export default function Home() {
     const containerVariants = {
@@ -131,6 +131,7 @@ export default function Home() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-all duration-300 shadow-lg shadow-blue-200"
+                            onClick={() => router.visit('/dashboard')}
                         >
                             <LayoutDashboard className="w-5 h-5" />
                             Go to Dashboard

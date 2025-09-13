@@ -4,7 +4,7 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -115,7 +115,7 @@ export default function Login({ status, canResetPassword }) {
                             An intelligent Inventory Management System to track, update, and manage stock effortlessly with real-time updates and predictive analytics.
                         </p>
                         
-                        <button className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 flex items-center justify-center lg:justify-start mx-auto lg:mx-0">
+                        <button className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 flex items-center justify-center lg:justify-start mx-auto lg:mx-0" onClick={() => router.visit('/dashboard')}>
                             Go to Dashboard <i className="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>

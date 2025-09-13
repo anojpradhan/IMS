@@ -26,10 +26,10 @@ export default function Sidebar() {
     { name: "Customers", icon: <Users size={18} />, link: "/customers" },
     { name: "Products", icon: <Package size={18} />, link: "/products" },
     { name: "Purchases", icon: <ClipboardList size={18} />, link: "/purchases" },
-    { name: "Purchase Items", icon: <Boxes size={18} />, link: "/purchase-items" },
+    // { name: "Purchase Items", icon: <Boxes size={18} />, link: "/purchase-items" },
     { name: "Sales", icon: <TrendingUp size={18} />, link: "/sales" },
-    { name: "Sale Items", icon: <Boxes size={18} />, link: "/sale-items" },
-    { name: "Stock Movements", icon: <Package size={18} />, link: "/stock-movements" },
+    // { name: "Sale Items", icon: <Boxes size={18} />, link: "/sale-items" },
+    // { name: "Stock Movements", icon: <Package size={18} />, link: "/stock-movements" },
   ];
 
   return (
