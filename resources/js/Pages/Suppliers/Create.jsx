@@ -66,7 +66,10 @@ export default function Create() {
                                     name="contact_person"
                                     value={data.contact_person}
                                     onChange={(e) =>
-                                        setData("contact_person", e.target.value)
+                                        setData(
+                                            "contact_person",
+                                            e.target.value
+                                        )
                                     }
                                     className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                     placeholder="Enter contact person"
