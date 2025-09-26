@@ -39,6 +39,8 @@ Route::middleware('auth')->group(function () {
             ->name('organizations.destroy');
     });
 
+    Route::resource('roles',RoleController::class);
+
     // Categories & Subcategories
     Route::resource('categories', CategoryController::class);
     Route::resource('subcategories', SubcategoryController::class);
