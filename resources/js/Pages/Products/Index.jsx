@@ -1,4 +1,5 @@
 import Sidebar from "@/Components/Sidebar";
+import AppLayout from "@/Layouts/AppLayout";
 import { Head, Link, router } from "@inertiajs/react";
 
 export default function Index({ products }) {
@@ -9,46 +10,45 @@ export default function Index({ products }) {
     };
 
     return (
-        <>
-            <Head title="Suppliers" />
-            <div className="flex min-h-screen bg-white">
-                <Sidebar />
+        <AppLayout>
+            <Head title="Products" />
 
-                <div className="flex-1 p-8">
-                    {/* Header Section */}
-                    <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-2xl font-bold text-blue-700">
-                            Suppliers
-                        </h1>
-                        <Link
-                            href={route("products.create")}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow transition"
-                        >
-                            + Add Products
-                        </Link>
-                    </div>
+            <div className="p-6 md:p-10">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <h1 className="text-2xl font-bold text-green-700">
+                        Products
+                    </h1>
+                    <Link
+                        href={route("products.create")}
+                        className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow transition"
+                    >
+                        + Add Product
+                    </Link>
+                </div>
 
-                    {/* Table Container */}
-                    <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
+                {/* Table Container */}
+                <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
+                    <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-green-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                                         Name
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                                         Category → Subcategory
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                                         Selling Price
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                                         Buying Price
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                                         Quantity
                                     </th>
-                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-700 uppercase">
                                         Actions
                                     </th>
                                 </tr>
@@ -73,13 +73,13 @@ export default function Index({ products }) {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             {product.quantity}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
+                                        <td className="px-6 py-4 whitespace-nowrap text-right space-x-3">
                                             <Link
                                                 href={route(
                                                     "products.edit",
                                                     product.id
                                                 )}
-                                                className="text-blue-600 hover:text-blue-800"
+                                                className="text-green-600 hover:text-green-800 font-medium"
                                             >
                                                 Edit
                                             </Link>
@@ -87,7 +87,7 @@ export default function Index({ products }) {
                                                 onClick={() =>
                                                     handleDelete(product.id)
                                                 }
-                                                className="text-red-600 hover:text-red-800"
+                                                className="text-red-600 hover:text-red-800 font-medium"
                                             >
                                                 Delete
                                             </button>
@@ -96,37 +96,37 @@ export default function Index({ products }) {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
 
-                        {/* Pagination */}
-                        <div className="p-4">
-                            {products.links && (
-                                <div className="space-x-2">
-                                    {products.links.map((link, index) => (
-                                        <button
-                                            key={index}
-                                            disabled={!link.url}
-                                            onClick={() =>
-                                                link.url && router.get(link.url)
-                                            }
-                                            className={`px-3 py-1 rounded ${
-                                                link.active
-                                                    ? "bg-blue-600 text-white"
-                                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                            }`}
-                                        >
-                                            <span
-                                                dangerouslySetInnerHTML={{
-                                                    __html: link.label,
-                                                }}
-                                            />
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                    {/* Pagination */}
+                    <div className="p-4">
+                        {products.links && (
+                            <div className="flex flex-wrap gap-2">
+                                {products.links.map((link, index) => (
+                                    <button
+                                        key={index}
+                                        disabled={!link.url}
+                                        onClick={() =>
+                                            link.url && router.get(link.url)
+                                        }
+                                        className={`px-3 py-1 rounded text-sm ${
+                                            link.active
+                                                ? "bg-green-600 text-white"
+                                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                        }`}
+                                    >
+                                        <span
+                                            dangerouslySetInnerHTML={{
+                                                __html: link.label,
+                                            }}
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

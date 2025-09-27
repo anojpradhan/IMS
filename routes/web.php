@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Home and Dashboard
-Route::get('/', fn() => Inertia::render('Home'));
+Route::get('/', fn() => Inertia::render('Welcome'))->name('welcome');
+Route::get('/home', fn() => Inertia::render('Home'))->name('home');
+
 Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
 // API Routes
@@ -30,7 +32,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Organization Routes
-    Route::prefix('organization')->group(function () {
+    Route::prefix('organizations')->group(function () {
         Route::get('/create', [OrganizationController::class, 'form'])->name('organizations.create');
         Route::post('/', [OrganizationController::class, 'store'])->name('organizations.store');
         Route::get('/edit', [OrganizationController::class, 'form'])->name('organizations.edit');

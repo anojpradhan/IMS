@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { Head, Link, usePage } from "@inertiajs/react";
-import Sidebar from "@/Components/Sidebar";
+import AppLayout from "@/Layouts/AppLayout";
 
 export default function Index() {
     const { purchases } = usePage().props;
@@ -27,167 +27,197 @@ export default function Index() {
     };
 
     return (
-        <>
-            <Head title="Suppliers" />
-            <div className="flex min-h-screen bg-white">
-                <Sidebar />
+        <AppLayout title="Purchases">
+            <Head title="Purchases" />
 
-                <div className=" flex-1 p-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold">Purchases</h1>
-                        <Link
-                            href="/purchases/create"
-                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                        >
-                            Add Purchase
-                        </Link>
-                    </div>
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h1 className="text-2xl font-bold text-gray-800">Purchases</h1>
+                <Link
+                    href="/purchases/create"
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                >
+                    Add Purchase
+                </Link>
+            </div>
 
-                    <table className="w-full border-collapse border border-gray-300">
-                        <thead>
-                            <tr className="bg-gray-100">
-                                <th className="border p-2">Invoice</th>
-                                <th className="border p-2">Date</th>
-                                <th className="border p-2">Supplier</th>
-                                <th className="border p-2">Total</th>
-                                <th className="border p-2">Remain</th>
-                                <th className="border p-2">Status</th>
-                                <th className="border p-2">Actions</th>
+            {/* Purchases Table */}
+            <div className="overflow-x-auto bg-white shadow rounded-lg">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-100">
+                        <tr>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                                Invoice
+                            </th>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                                Date
+                            </th>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                                Supplier
+                            </th>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                                Total
+                            </th>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                                Remain
+                            </th>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                                Status
+                            </th>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {purchases.map((p) => (
+                            <tr key={p.id} className="hover:bg-gray-50">
+                                <td className="px-4 py-2 text-sm">
+                                    {p.invoice_number}
+                                </td>
+                                <td className="px-4 py-2 text-sm">
+                                    {p.purchase_date}
+                                </td>
+                                <td className="px-4 py-2 text-sm">
+                                    {p.supplier?.name}
+                                </td>
+                                <td className="px-4 py-2 text-sm">
+                                    {p.total_amount}
+                                </td>
+                                <td className="px-4 py-2 text-sm">
+                                    {p.remain_amount}
+                                </td>
+                                <td className="px-4 py-2 text-sm capitalize">
+                                    {p.payment_status}
+                                </td>
+                                <td className="px-4 py-2 flex gap-2 flex-wrap">
+                                    <button
+                                        onClick={() => handleShow(p)}
+                                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                                    >
+                                        Show
+                                    </button>
+                                    <Link
+                                        href={`/purchases/${p.id}/edit`}
+                                        className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+                                    >
+                                        Edit
+                                    </Link>
+                                    <button
+                                        onClick={() => handleDelete(p.id)}
+                                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {purchases.map((p) => (
-                                <tr key={p.id} className="hover:bg-gray-50">
-                                    <td className="border p-2">
-                                        {p.invoice_number}
-                                    </td>
-                                    <td className="border p-2">
-                                        {p.purchase_date}
-                                    </td>
-                                    <td className="border p-2">
-                                        {p.supplier?.name}
-                                    </td>
-                                    <td className="border p-2">
-                                        {p.total_amount}
-                                    </td>
-                                    <td className="border p-2">
-                                        {p.remain_amount}
-                                    </td>
-                                    <td className="border p-2 capitalize">
-                                        {p.payment_status}
-                                    </td>
-                                    <td className="border p-2 space-x-2">
-                                        <button
-                                            onClick={() => handleShow(p)}
-                                            className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                                        >
-                                            Show
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(p.id)}
-                                            className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                                        >
-                                            Delete
-                                        </button>
-                                        <Link
-                                            href={`/purchases/${p.id}/edit`}
-                                            className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                                        >
-                                            Edit
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-                    {/* Show Modal */}
-                    {showModal && currentPurchase && (
-                        <div
-                            id="modalOverlay"
-                            onClick={handleClose}
-                            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-                        >
-                            <div className="bg-white rounded p-6 w-11/12 max-w-xl shadow-lg">
-                                <h2 className="text-xl font-bold mb-4">
-                                    Invoice: {currentPurchase.invoice_number}
-                                </h2>
-                                <p className="mb-2">
-                                    Date: {currentPurchase.purchase_date}
-                                </p>
-                                <p className="mb-2">
-                                    Supplier: {currentPurchase.supplier?.name}
-                                </p>
-                                <p className="mb-2">
-                                    Total Amount: {currentPurchase.total_amount}
-                                </p>
-                                <p className="mb-2">
-                                    Remain Amount:{" "}
-                                    {currentPurchase.remain_amount}
-                                </p>
-                                <p className="mb-2">
-                                    Status: {currentPurchase.payment_status}
-                                </p>
+            {/* Modern Modal */}
+            {showModal && currentPurchase && (
+                <div
+                    id="modalOverlay"
+                    onClick={handleClose}
+                    className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4"
+                >
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl overflow-hidden animate-fadeIn">
+                        <div className="flex justify-between items-center p-4 border-b">
+                            <h2 className="text-xl font-bold text-gray-800">
+                                Invoice: {currentPurchase.invoice_number}
+                            </h2>
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="text-gray-500 hover:text-gray-700 transition text-2xl font-bold"
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <div className="p-4 space-y-2 text-gray-700">
+                            <p>
+                                <span className="font-semibold">Date:</span>{" "}
+                                {currentPurchase.purchase_date}
+                            </p>
+                            <p>
+                                <span className="font-semibold">Supplier:</span>{" "}
+                                {currentPurchase.supplier?.name}
+                            </p>
+                            <p>
+                                <span className="font-semibold">
+                                    Total Amount:
+                                </span>{" "}
+                                {currentPurchase.total_amount}
+                            </p>
+                            <p>
+                                <span className="font-semibold">
+                                    Remain Amount:
+                                </span>{" "}
+                                {currentPurchase.remain_amount}
+                            </p>
+                            <p>
+                                <span className="font-semibold">Status:</span>{" "}
+                                {currentPurchase.payment_status}
+                            </p>
 
-                                <h3 className="font-semibold mt-4 mb-2">
-                                    Items
-                                </h3>
-                                <table className="w-full border border-gray-300 border-collapse">
-                                    <thead>
-                                        <tr className="bg-gray-100">
-                                            <th className="border p-2">
+                            <h3 className="font-semibold mt-4 mb-2">Items</h3>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200 border rounded">
+                                    <thead className="bg-gray-100">
+                                        <tr>
+                                            <th className="px-3 py-2 text-left text-sm font-medium">
                                                 Product
                                             </th>
-                                            <th className="border p-2">
+                                            <th className="px-3 py-2 text-left text-sm font-medium">
                                                 Quantity
                                             </th>
-                                            <th className="border p-2">
+                                            <th className="px-3 py-2 text-left text-sm font-medium">
                                                 Price
                                             </th>
-                                            <th className="border p-2">
+                                            <th className="px-3 py-2 text-left text-sm font-medium">
                                                 Paid Status
                                             </th>
-                                            <th className="border p-2">
+                                            <th className="px-3 py-2 text-left text-sm font-medium">
                                                 Remain
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody className="divide-y divide-gray-200">
                                         {currentPurchase.items.map((item) => (
                                             <tr key={item.id}>
-                                                <td className="border p-2">
+                                                <td className="px-3 py-2 text-sm">
                                                     {item.product?.name}
                                                 </td>
-                                                <td className="border p-2">
+                                                <td className="px-3 py-2 text-sm">
                                                     {item.quantity}
                                                 </td>
-                                                <td className="border p-2">
+                                                <td className="px-3 py-2 text-sm">
                                                     {item.purchase_price}
                                                 </td>
-                                                <td className="border p-2 capitalize">
+                                                <td className="px-3 py-2 text-sm capitalize">
                                                     {item.payment_status}
                                                 </td>
-                                                <td className="border p-2">
+                                                <td className="px-3 py-2 text-sm">
                                                     {item.remain_amount}
                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
-
-                                <div className="mt-4 flex justify-end">
-                                    <button
-                                        onClick={() => setShowModal(false)}
-                                        className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                                    >
-                                        Close
-                                    </button>
-                                </div>
                             </div>
                         </div>
-                    )}
+                        <div className="flex justify-end p-4 border-t">
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </>
+            )}
+        </AppLayout>
     );
 }

@@ -11,6 +11,8 @@ use Inertia\Inertia;
 class OrganizationController extends Controller
 {
 
+    
+
     public function form()
     {
         $user = Auth::user();

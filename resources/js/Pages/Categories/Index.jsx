@@ -1,125 +1,116 @@
-import React from "react";
-import { Inertia } from "@inertiajs/inertia";
-import { Head, Link, usePage } from "@inertiajs/react";
-import Sidebar from "@/Components/Sidebar";
+import AppLayout from "@/Layouts/AppLayout";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 
-export default function Index() {
+export default function CategoriesIndex() {
     const { categories, flash } = usePage().props;
 
     const handleDelete = (id) => {
         if (confirm("Are you sure you want to delete this category?")) {
-            Inertia.delete(route("categories.destroy", id));
+            router.delete(route("categories.destroy", id));
         }
     };
 
     return (
-        <>
+        <AppLayout title="Categories">
             <Head title="Categories" />
-            <div className="flex flex-col md:flex-row min-h-screen">
-                <Sidebar />
 
-                <main className="flex-1 bg-gray-100 p-6">
-                    {/* Header */}
-                    <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-                        <h1 className="text-2xl font-bold text-gray-800">
-                            Categories
-                        </h1>
-                        <a
-                            href={route("categories.create")}
-                            className="rounded-lg bg-blue-600 px-4 py-2 text-white shadow hover:bg-blue-700 transition"
-                        >
-                            + Create New
-                        </a>
-                    </div>
-
-                    {/* Flash Message */}
-                    {flash?.success && (
-                        <div className="mb-4 p-3 bg-green-100 border border-green-300 text-green-800 rounded">
-                            {flash.success}
-                        </div>
-                    )}
-
-                    {/* Table */}
-                    <div className="overflow-x-auto bg-white shadow rounded-lg">
-                        <table className="w-full border-collapse">
-                            <thead className="bg-blue-600 text-white">
-                                <tr>
-                                    <th className="p-3 text-left">Name</th>
-                                    <th className="p-3 text-left">
-                                        Description
-                                    </th>
-                                    <th className="p-3 text-left">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {categories.data.length === 0 && (
-                                    <tr>
-                                        <td
-                                            colSpan="3"
-                                            className="text-center p-6 text-gray-600"
-                                        >
-                                            No categories found.
-                                        </td>
-                                    </tr>
-                                )}
-
-                                {categories.data.map((category) => (
-                                    <tr
-                                        key={category.id}
-                                        className="border-b hover:bg-gray-50"
-                                    >
-                                        <td className="p-3">{category.name}</td>
-                                        <td className="p-3 text-gray-700">
-                                            {category.description}
-                                        </td>
-                                        <td className="p-3 space-x-3">
-                                            <Link
-                                                href={route(
-                                                    "categories.edit",
-                                                    category.id
-                                                )}
-                                                className="text-blue-600 hover:underline"
-                                            >
-                                                Edit
-                                            </Link>
-                                            <button
-                                                onClick={() =>
-                                                    handleDelete(category.id)
-                                                }
-                                                className="text-red-600 hover:underline"
-                                            >
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Pagination */}
-                    <div className="mt-6 flex flex-wrap gap-2">
-                        {categories.links &&
-                            categories.links.map((link, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() =>
-                                        link.url && Inertia.visit(link.url)
-                                    }
-                                    disabled={!link.url}
-                                    className={`px-3 py-1 rounded-md text-sm ${
-                                        link.active
-                                            ? "bg-blue-600 text-white"
-                                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                    }`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
-                            ))}
-                    </div>
-                </main>
+            {/* Header */}
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <h1 className="text-3xl font-bold text-green-700">
+                    Categories
+                </h1>
+                <Link
+                    href={route("categories.create")}
+                    className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700 transition"
+                >
+                    + Create Category
+                </Link>
             </div>
-        </>
+
+            {/* Flash Message */}
+            {flash?.success && (
+                <div className="mb-4 rounded bg-green-100 p-3 text-green-800 shadow">
+                    {flash.success}
+                </div>
+            )}
+
+            {/* Categories Table */}
+            <div className="overflow-x-auto rounded border border-gray-200 shadow bg-white">
+                <table className="w-full text-left text-sm">
+                    <thead className="bg-gray-50 text-gray-700">
+                        <tr>
+                            <th className="border p-3">Name</th>
+                            <th className="border p-3">Description</th>
+                            <th className="border p-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {categories.data.length === 0 ? (
+                            <tr>
+                                <td
+                                    colSpan={3}
+                                    className="p-4 text-center text-gray-500 italic"
+                                >
+                                    No categories found.
+                                </td>
+                            </tr>
+                        ) : (
+                            categories.data.map((category) => (
+                                <tr
+                                    key={category.id}
+                                    className="hover:bg-gray-50"
+                                >
+                                    <td className="border p-3">
+                                        {category.name}
+                                    </td>
+                                    <td className="border p-3">
+                                        {category.description || "-"}
+                                    </td>
+                                    <td className="border p-3 text-center space-x-2">
+                                        <Link
+                                            href={route(
+                                                "categories.edit",
+                                                category.id
+                                            )}
+                                            className="rounded px-3 py-1 text-xs text-white bg-yellow-500 hover:bg-yellow-600 transition"
+                                        >
+                                            Edit
+                                        </Link>
+                                        <button
+                                            onClick={() =>
+                                                handleDelete(category.id)
+                                            }
+                                            className="rounded px-3 py-1 text-xs text-white bg-red-600 hover:bg-red-700 transition"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="mt-6 flex justify-center flex-wrap gap-2">
+                {categories.links &&
+                    categories.links.map((link, i) => (
+                        <button
+                            key={i}
+                            onClick={() => link.url && router.visit(link.url)}
+                            disabled={!link.url}
+                            className={`px-3 py-1.5 rounded text-sm ${
+                                link.active
+                                    ? "bg-green-600 text-white"
+                                    : "bg-white text-gray-700 hover:bg-gray-100"
+                            } ${
+                                !link.url ? "cursor-not-allowed opacity-50" : ""
+                            }`}
+                            dangerouslySetInnerHTML={{ __html: link.label }}
+                        />
+                    ))}
+            </div>
+        </AppLayout>
     );
 }

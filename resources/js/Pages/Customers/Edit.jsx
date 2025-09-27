@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { Head, Link, usePage } from "@inertiajs/react";
-import Sidebar from "@/Components/Sidebar";
+import AppLayout from "@/Layouts/AppLayout";
 
 export default function Edit() {
     const { customer, errors } = usePage().props;
@@ -25,77 +25,67 @@ export default function Edit() {
     };
 
     return (
-        <>
-            <Head title="Suppliers" />
-            <div className="flex min-h-screen bg-white">
-                <Sidebar />
+        <AppLayout title="Customers">
+            <Head title="Edit Customer" />
+            <div className="flex items-center justify-center min-h-[calc(100vh-80px)] bg-gray-50 p-4">
+                <div className="w-full max-w-lg bg-white shadow-xl rounded-2xl p-6 border border-gray-200">
+                    <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800 text-center">
+                        Edit Customer
+                    </h1>
 
-                <div className="flex-1 flex justify-center items-start p-8">
-                    <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 border border-gray-200">
-                        <h1 className="text-xl font-bold mb-4">
-                            Edit Customer
-                        </h1>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            {[
-                                { label: "Name", name: "name", type: "text" },
-                                {
-                                    label: "Contact Person",
-                                    name: "contact_person",
-                                    type: "text",
-                                },
-                                { label: "Phone", name: "phone", type: "text" },
-                                {
-                                    label: "Email",
-                                    name: "email",
-                                    type: "email",
-                                },
-                                {
-                                    label: "Address",
-                                    name: "address",
-                                    type: "text",
-                                },
-                            ].map((field) => (
-                                <div key={field.name}>
-                                    <label className="block font-medium">
-                                        {field.label}
-                                    </label>
-                                    <input
-                                        type={field.type}
-                                        name={field.name}
-                                        value={values[field.name]}
-                                        onChange={handleChange}
-                                        className={`border w-full p-2 rounded ${
-                                            errors[field.name]
-                                                ? "border-red-500"
-                                                : ""
-                                        }`}
-                                    />
-                                    {errors[field.name] && (
-                                        <div className="text-red-500 mt-1">
-                                            {errors[field.name]}
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-
-                            <div className="flex space-x-2">
-                                <button
-                                    type="submit"
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                                >
-                                    Update
-                                </button>
-                                <Link
-                                    href={route("customers.index")}
-                                    className="bg-gray-500 text-white px-4 py-2 rounded"
-                                >
-                                    Cancel
-                                </Link>
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        {[
+                            { label: "Name", name: "name", type: "text" },
+                            {
+                                label: "Contact Person",
+                                name: "contact_person",
+                                type: "text",
+                            },
+                            { label: "Phone", name: "phone", type: "text" },
+                            { label: "Email", name: "email", type: "email" },
+                            { label: "Address", name: "address", type: "text" },
+                        ].map((field) => (
+                            <div key={field.name}>
+                                <label className="block font-semibold text-gray-700 mb-1">
+                                    {field.label}
+                                </label>
+                                <input
+                                    type={field.type}
+                                    name={field.name}
+                                    value={values[field.name]}
+                                    onChange={handleChange}
+                                    className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 ${
+                                        errors[field.name]
+                                            ? "border-red-500"
+                                            : "border-gray-300"
+                                    }`}
+                                    placeholder={`Enter ${field.label.toLowerCase()}`}
+                                />
+                                {errors[field.name] && (
+                                    <div className="text-red-600 mt-1 text-sm">
+                                        {errors[field.name]}
+                                    </div>
+                                )}
                             </div>
-                        </form>
-                    </div>
+                        ))}
+
+                        <div className="flex flex-col sm:flex-row gap-3 justify-between">
+                            <button
+                                type="submit"
+                                className="w-full sm:w-auto bg-green-600 text-white px-5 py-2.5 rounded-lg shadow hover:bg-green-700 transition"
+                            >
+                                Update
+                            </button>
+                            <Link
+                                href={route("customers.index")}
+                                className="w-full sm:w-auto text-center bg-red-500 text-white px-5 py-2.5 rounded-lg shadow hover:bg-red-600 transition"
+                            >
+                                Cancel
+                            </Link>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }
