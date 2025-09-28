@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\OrgUserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
@@ -21,6 +22,10 @@ Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->middleware(['aut
 
 // API Routes
 Route::get('/api/roles', [RoleController::class, 'getroles']);
+Route::get('/users', [OrgUserController::class, 'index'])->name('users.index');
+Route::get('/users/add', [OrgUserController::class, 'addpage'])->name('users.addpage');
+Route::post('/users/add', [OrgUserController::class, 'adduser'])->name('users.add');
+Route::delete('/users/{id}/remove', [OrgUserController::class, 'removeuser'])->name('users.remove');
 
 Route::middleware('auth')->group(function () {
 
@@ -41,7 +46,7 @@ Route::middleware('auth')->group(function () {
             ->name('organizations.destroy');
     });
 
-    Route::resource('roles',RoleController::class);
+    Route::resource('roles', RoleController::class);
 
     // Categories & Subcategories
     Route::resource('categories', CategoryController::class);
