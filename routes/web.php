@@ -16,19 +16,18 @@ use Inertia\Inertia;
 
 // Home and Dashboard
 Route::get('/', fn() => Inertia::render('Welcome'))->name('welcome');
-Route::get('/home', fn() => Inertia::render('Home'))->name('home');
 
 Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
-// API Routes
-Route::get('/api/roles', [RoleController::class, 'getroles']);
-Route::get('/users', [OrgUserController::class, 'index'])->name('users.index');
-Route::get('/users/add', [OrgUserController::class, 'addpage'])->name('users.addpage');
-Route::post('/users/add', [OrgUserController::class, 'adduser'])->name('users.add');
-Route::delete('/users/{id}/remove', [OrgUserController::class, 'removeuser'])->name('users.remove');
 
 Route::middleware('auth')->group(function () {
-
+    Route::get('/home', fn() => Inertia::render('Home'))->name('home');
+    // API Routes
+    Route::get('/api/roles', [RoleController::class, 'getroles']);
+    Route::get('/users', [OrgUserController::class, 'index'])->name('users.index');
+    Route::get('/users/add', [OrgUserController::class, 'addpage'])->name('users.addpage');
+    Route::post('/users/add', [OrgUserController::class, 'adduser'])->name('users.add');
+    Route::delete('/users/{id}/remove', [OrgUserController::class, 'removeuser'])->name('users.remove');
     // Profile Routes
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');

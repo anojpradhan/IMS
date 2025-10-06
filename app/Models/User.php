@@ -53,8 +53,8 @@ class User extends Authenticatable
     /**
      * Set the user's password (hashed automatically)
      */
-    public function setPasswordAttribute($password)
-    {
-        $this->attributes['password'] = bcrypt($password);
-    }
+    // public function setPasswordAttribute($password)
+    // {
+    //     $this->attributes['password'] = bcrypt($password);
+    // }
 }
