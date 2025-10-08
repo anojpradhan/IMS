@@ -1,36 +1,204 @@
 // resources/js/Layouts/AppLayout.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "@/Components/Sidebar";
-import { Menu } from "lucide-react";
+import { UserCircle, LogOut, Bell, Search, ChevronDown, Menu } from "lucide-react";
+import { router, usePage } from "@inertiajs/react";
+import { motion } from "framer-motion"; 
 
 export default function AppLayout({ children, title }) {
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const { auth } = usePage().props;
+
+    // Handle scroll for header shadow
+    useEffect(() => {
+        const handleScroll = () => setIsScrolled(window.scrollY > 10);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    const handleLogout = () => {
+        if (confirm("Are you sure you want to logout?")) {
+            router.post(route("logout"));
+        }
+    };
 
     return (
         <div className="flex min-h-screen bg-gray-50">
-            {/* Sidebar (desktop) */}
+            {/* Sidebar */}
             <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col">
-                {/* Topbar for mobile */}
-                <header className="md:hidden flex items-center justify-between bg-gray-900 text-white px-4 py-3 shadow">
-                    <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold">
-                            IMS
+            <div className="flex-1 flex flex-col min-w-0">
+                {/* 🔹 Mobile Header */}
+                <header
+                    className={` md:hidden sticky top-0 z-20 transition-all duration-300 ${
+                        isScrolled
+                            ? "bg-white shadow-lg border-b border-gray-200"
+                            : "bg-blue-700"
+                    }`}
+                    style={{
+                        paddingTop: "env(safe-area-inset-top)",
+                        paddingLeft: "env(safe-area-inset-left)",
+                        paddingRight: "env(safe-area-inset-right)",
+                    }}
+                >
+                    <div className="px-4 py-3">
+                        <div className="flex items-center justify-between">
+                            {/* Left Section - Brand */}
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => setMobileOpen(true)}
+                                    className="bg-red-600 hover:bg-red-500 p-2 rounded-md transition"
+                                >
+                                    <Menu size={22} />
+                                </button>
+                                <div>
+                                    <h1 className="text-white font-bold text-lg">
+                                        {title || "LogiTrek"}
+                                    </h1>
+                                </div>
+                            </div>
+
+                            {/* Right Section - Profile + Logout + Bell */}
+                            <div className="flex items-center gap-3">
+                                <button className="p-2 rounded-full bg-white text-blue-700 hover:bg-red-600 hover:text-white transition">
+                                    <Bell size={18} />
+                                </button>
+
+                                <a
+                                    href="/profile"
+                                    className="p-2 rounded-full bg-red-600 text-white hover:bg-red-500 transition"
+                                    title="Profile"
+                                >
+                                    <UserCircle size={18} />
+                                </a>
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-500 transition"
+                                    title="Logout"
+                                >
+                                    <LogOut size={18} />
+                                </button>
+                            </div>
                         </div>
-                        <span className="font-semibold">{title}</span>
+
+                        {/* Optional Search */}
+                        {isScrolled && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mt-3"
+                            >
+                                <div className="relative">
+                                    <Search
+                                        size={18}
+                                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
                     </div>
-                    <button
-                        onClick={() => setMobileOpen(true)}
-                        className="p-2 rounded-md hover:bg-gray-800 transition"
-                    >
-                        <Menu size={22} />
-                    </button>
                 </header>
 
-                {/* Page Content */}
-                <main className="flex-1 p-6">{children}</main>
+                {/* 🔹 Desktop Header */}
+                <header
+                    className={`hidden md:flex top-0 z-20 bg-white border-b border-gray-200 transition-shadow duration-300 ${
+                        isScrolled ? "shadow-lg" : "shadow-sm"
+                    }`}
+                >
+                    <div className="flex-1 px-6 py-4 flex items-center justify-between">
+                        {/* Left Section - Page Title */}
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">
+                                {title || "Dashboard"}
+                            </h1>
+                            <p className="text-gray-600 text-sm mt-1">
+                                Welcome back, {auth.user?.name || "User"}!
+                            </p>
+                        </div>
+
+                        {/* Right Section */}
+                        <div className="flex items-center gap-4">
+                            <div className="relative">
+                                <Search
+                                    size={18}
+                                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    className="w-64 pl-10 pr-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-sm"
+                                />
+                            </div>
+
+                            <button className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300">
+                                <Bell size={20} />
+                                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
+                            </button>
+
+                            {/* Profile Dropdown */}
+                            <div className="relative group">
+                                <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition">
+                                    <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                                        {auth.user?.name?.charAt(0)?.toUpperCase() || "U"}
+                                    </div>
+                                    <ChevronDown
+                                        size={16}
+                                        className="text-gray-400 group-hover:rotate-180 transition-transform duration-300"
+                                    />
+                                </div>
+                                <div className="absolute top-full right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                                    <a
+                                        href="/profile"
+                                        className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 transition"
+                                    >
+                                        <UserCircle size={16} />
+                                        Profile
+                                    </a>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 w-full text-left"
+                                    >
+                                        <LogOut size={16} />
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                {/* Main Content */}
+                <main
+                    className="flex-1 p-4 md:p-6 lg:p-8"
+                    style={{
+                        paddingBottom: "env(safe-area-inset-bottom)",
+                    }}
+                >
+                    <div className="max-w-7xl mx-auto w-full">{children}</div>
+                </main>
+
+                {/* Footer */}
+                <footer className="bg-white border-t border-gray-200 mt-auto">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row md:items-center md:justify-between">
+                        <p className="text-sm text-gray-600 text-center md:text-left">
+                            © {new Date().getFullYear()}{" "}
+                            <span className="font-semibold text-blue-600">LogiTrek</span> — Streamlined Inventory Management System
+                        </p>
+                        <div className="mt-2 md:mt-0 flex justify-center md:justify-end gap-4">
+                            <a href="#" className="text-sm text-gray-500 hover:text-gray-700 transition">Privacy</a>
+                            <a href="#" className="text-sm text-gray-500 hover:text-gray-700 transition">Terms</a>
+                            <a href="#" className="text-sm text-gray-500 hover:text-gray-700 transition">Support</a>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </div>
     );

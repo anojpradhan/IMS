@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "@inertiajs/react";
+import React, { useState, useEffect } from "react";
+import { Link, usePage, router } from "@inertiajs/react";
 import {
     LayoutDashboard,
     Users,
@@ -14,161 +14,273 @@ import {
     ChevronRight,
     X,
     UserCircle,
+    LogOut,
+    Menu,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function Sidebar({ mobileOpen, setMobileOpen }) {
+export default function Sidebar() {
+    const { auth, organizations = [] } = usePage().props;
     const [isOpen, setIsOpen] = useState(true);
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setIsOpen(false);
+            } else {
+                setIsOpen(true);
+                setMobileOpen(false);
+            }
+        };
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const handleLogout = () => {
+        if (confirm("Are you sure you want to logout?")) {
+            router.post(route("logout"));
+        }
+    };
 
     const menuItems = [
-        { name: "Dashboard", icon: <LayoutDashboard size={20} />, link: "/dashboard" },
-        { name: "Roles", icon: <Settings size={20} />, link: "/roles" },
-        { name: "Users", icon: <Users size={20} />, link: "/users" },
-        { name: "Categories", icon: <Layers size={20} />, link: "/categories" },
-        { name: "Subcategories", icon: <List size={20} />, link: "/subcategories" },
-        { name: "Suppliers", icon: <Truck size={20} />, link: "/suppliers" },
-        { name: "Customers", icon: <Users size={20} />, link: "/customers" },
-        { name: "Products", icon: <Package size={20} />, link: "/products" },
-        { name: "Purchases", icon: <ClipboardList size={20} />, link: "/purchases" },
-        { name: "Sales", icon: <TrendingUp size={20} />, link: "/sales" },
+        { name: "Dashboard", icon: LayoutDashboard, link: "/dashboard" },
+        { name: "Roles", icon: Settings, link: "/roles" },
+        { name: "Users", icon: Users, link: "/users" },
+        { name: "Categories", icon: Layers, link: "/categories" },
+        { name: "Subcategories", icon: List, link: "/subcategories" },
+        { name: "Suppliers", icon: Truck, link: "/suppliers" },
+        { name: "Customers", icon: Users, link: "/customers" },
+        { name: "Products", icon: Package, link: "/products" },
+        { name: "Purchases", icon: ClipboardList, link: "/purchases" },
+        { name: "Sales", icon: TrendingUp, link: "/sales" },
     ];
+
+    const sidebarVariants = {
+        open: { width: "15rem" },
+        closed: { width: "4.5rem" },
+    };
+
+    const itemVariants = {
+        open: { opacity: 1, x: 0 },
+        closed: { opacity: 0, x: -10 },
+    };
 
     return (
         <>
-            {/* 🖥 Desktop Sidebar */}
-            <aside
-                className={`hidden md:flex flex-col justify-between bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 text-gray-900 min-h-screen p-4 relative border-r border-gray-300 backdrop-blur-md transition-all duration-300 shadow-[2px_0_6px_rgba(0,0,0,0.1)]`}
-                style={{ width: isOpen ? "16rem" : "5rem" }}
+            {/* Mobile menu button */}
+            <button
+                onClick={() => setMobileOpen(true)}
+                className="fixed top-4 left-4 z-40 md:hidden bg-red-600 text-white p-2 rounded-md shadow-md hover:bg-red-500 transition"
             >
-                <div>
-                    {/* Toggle Button */}
-                    <button
-                        onClick={() => setIsOpen(!isOpen)}
-                        className="absolute -right-3 top-6 bg-red-600 text-white p-1.5 rounded-full shadow-lg hover:bg-red-500 hover:scale-105 transition"
+                <Menu size={20} />
+            </button>
+
+            {/* Desktop Sidebar */}
+            <motion.aside
+                variants={sidebarVariants}
+                initial="open"
+                animate={isOpen ? "open" : "closed"}
+                transition={{ duration: 0.3 }}
+                className="hidden md:flex flex-col bg-white text-gray-900 min-h-screen border-r border-gray-200 p-3 relative shadow-sm"
+            >
+                {/* Toggle Button */}
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="absolute -right-3 top-6 bg-red-600 text-white p-1.5 rounded-full shadow-md hover:bg-red-500 transition z-30"
+                >
+                    {isOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+                </button>
+
+                {/* Logo */}
+              <div className="flex items-center gap-3 mb-8 mt-2 min-h-[40px] overflow-hidden"    onClick={()=>router.visit('dashboard')}>
+                    <motion.div
+                        // whileHover={{ scale: 1.05, rotate: 5 }}
+                        className="h-10 w-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center font-bold shadow-md text-white flex-shrink-0 hover:cursor-pointer"
                     >
-                        {isOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
-                    </button>
+                        L
+                    </motion.div>
 
-                    {/* Logo */}
-                    <div className="flex items-center gap-2 mb-8 mt-2">
-                        <div className="h-10 w-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center font-bold shadow-md text-white">
-                            L
-                        </div>
+                    <AnimatePresence mode="wait">
                         {isOpen && (
-                            <h2 className="text-xl font-semibold transition-opacity duration-300">
+                            <motion.h2
+                                key="logo-text"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.3 }}
+                             
+                                className="text-xl font-bold whitespace-nowrap hover:cursor-pointer"
+                            >
                                 LogiTrek
-                            </h2>
+                            </motion.h2>
                         )}
-                    </div>
-
-                    {/* Menu Items */}
-                    <ul className="space-y-2">
-                        {menuItems.map((item, idx) => (
-                            <li key={idx}>
-                                <Link
-                                    href={item.link}
-                                    className="flex items-center gap-3 px-3 py-2 rounded-lg group relative overflow-hidden"
-                                >
-                                    {/* Hover background with shadow */}
-                                    <span className="absolute inset-0 bg-red-600 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg shadow-md group-hover:shadow-lg"></span>
-
-                                    <span className="relative text-blue-600 group-hover:text-white transition-all duration-300">
-                                        {item.icon}
-                                    </span>
-
-                                    {isOpen && (
-                                        <span className="relative text-sm font-medium text-gray-800 group-hover:text-white transition-all duration-300">
-                                            {item.name}
-                                        </span>
-                                    )}
-
-                                    {/* Tooltip for collapsed state */}
-                                    {!isOpen && (
-                                        <span className="absolute left-14 bg-gray-900 text-gray-200 px-2 py-1 rounded-md shadow-md opacity-0 group-hover:opacity-100 text-xs whitespace-nowrap transition-opacity duration-200 z-50">
-                                            {item.name}
-                                        </span>
-                                    )}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
+                    </AnimatePresence>
                 </div>
 
-                {/* Profile Section */}
-                <div className="mt-6 pt-4 border-t border-gray-400">
+                {/* Menu Items */}
+                <nav className="flex-1">
+                    <ul className="space-y-1">
+                        {menuItems.map((item, i) => {
+                            const Icon = item.icon;
+                            const isDisabled =
+                                !auth?.user?.organization_id && organizations.length === 0;
+
+                            return (
+                                <li key={i}>
+                                    {isDisabled ? (
+                                        <div
+                                            className="flex items-center gap-3 px-3 py-3 text-gray-400 bg-gray-100 rounded-md opacity-60 cursor-not-allowed"
+                                            title="Access disabled until you join or create an organization"
+                                        >
+                                            <Icon size={20} />
+                                            {isOpen && <span>{item.name}</span>}
+                                        </div>
+                                    ) : (
+                                        <Link
+                                            href={item.link}
+                                            className="flex items-center gap-3 px-3 py-3 rounded-md hover:bg-red-600 hover:text-white transition-all duration-200 text-gray-800"
+                                        >
+                                            <Icon size={20} />
+                                            <AnimatePresence>
+                                                {isOpen && (
+                                                    <motion.span
+                                                        variants={itemVariants}
+                                                        initial="closed"
+                                                        animate="open"
+                                                        exit="closed"
+                                                        transition={{ duration: 0.2 }}
+                                                    >
+                                                        {item.name}
+                                                    </motion.span>
+                                                )}
+                                            </AnimatePresence>
+                                        </Link>
+                                    )}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </nav>
+
+                {/* User Actions */}
+                <div className="mt-auto border-t pt-3 border-gray-200 space-y-2">
                     <Link
                         href="/profile"
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg group hover:bg-red-500 hover:shadow-md transition-all duration-300"
+                        className="flex items-center gap-3 px-3 py-3 rounded-md hover:bg-red-600 hover:text-white transition"
                     >
-                        <span className="text-gray-700 group-hover:text-white transition-colors duration-300">
-                            <UserCircle size={22} />
-                        </span>
-                        {isOpen && (
-                            <span className="text-sm font-medium text-gray-800 group-hover:text-white transition-colors duration-300">
-                                Profile
-                            </span>
-                        )}
-                        {!isOpen && (
-                            <span className="absolute left-14 bg-gray-900 text-gray-200 px-2 py-1 rounded-md shadow-md opacity-0 group-hover:opacity-100 text-xs whitespace-nowrap transition-opacity duration-200">
-                                Profile
-                            </span>
-                        )}
+                        <UserCircle size={20} />
+                        {isOpen && <span>Profile</span>}
                     </Link>
-                </div>
-            </aside>
 
-            {/* 📱 Mobile Sidebar */}
-            <div
-                className={`fixed inset-0 z-50 flex md:hidden transition-transform duration-300 ${
-                    mobileOpen ? "translate-x-0" : "-translate-x-full"
-                }`}
-            >
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-50"
-                    onClick={() => setMobileOpen(false)}
-                />
-                <aside className="relative w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-gray-200 p-4 shadow-2xl transition-transform duration-300">
                     <button
-                        onClick={() => setMobileOpen(false)}
-                        className="absolute top-4 right-4 text-gray-400 hover:text-white"
+                        onClick={handleLogout}
+                        className="flex items-center gap-3 px-3 py-3 rounded-md hover:bg-red-600 hover:text-white transition w-full text-left"
                     >
-                        <X size={22} />
+                        <LogOut size={20} />
+                        {isOpen && <span>Logout</span>}
                     </button>
+                </div>
+            </motion.aside>
 
-                    <div className="flex items-center gap-2 mb-8">
-                        <div className="h-10 w-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold shadow-md">
-                            L
-                        </div>
-                        <h2 className="text-xl font-semibold">LogiTrek</h2>
-                    </div>
-
-                    <ul className="space-y-2">
-                        {menuItems.map((item, idx) => (
-                            <li key={idx}>
-                                <Link
-                                    href={item.link}
-                                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-700 hover:shadow-md transition-all duration-300"
-                                    onClick={() => setMobileOpen(false)}
-                                >
-                                    <span className="text-indigo-400">{item.icon}</span>
-                                    <span className="text-sm font-medium">{item.name}</span>
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-
-                    {/* Mobile Profile */}
-                    <div className="mt-6 border-t border-gray-700 pt-4">
-                        <Link
-                            href="/profile"
+            {/* Mobile Sidebar */}
+            <AnimatePresence>
+                {mobileOpen && (
+                    <>
+                        {/* Overlay */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 0.5 }}
+                            exit={{ opacity: 0 }}
                             onClick={() => setMobileOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-700 hover:shadow-md transition-all duration-300"
+                            className="fixed inset-0 bg-black z-40 md:hidden"
+                        />
+
+                        {/* Sidebar */}
+                        <motion.aside
+                            initial={{ x: "-100%" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "-100%" }}
+                            transition={{ duration: 0.3 }}
+                            className="fixed inset-y-0 left-0 z-50 w-64 bg-white text-gray-900 shadow-md p-4 flex flex-col md:hidden"
                         >
-                            <UserCircle size={22} className="text-gray-300" />
-                            <span className="text-sm font-medium">Profile</span>
-                        </Link>
-                    </div>
-                </aside>
-            </div>
+                            {/* Header */}
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-2">
+                                    <div className="h-10 w-10 bg-green-600 text-white rounded-md flex items-center justify-center font-bold">
+                                        L
+                                    </div>
+                                    <h2 className="text-xl font-bold text-blue-700">LogiTrek</h2>
+                                </div>
+                                <button
+                                    onClick={() => setMobileOpen(false)}
+                                    className="text-gray-500 hover:text-red-600"
+                                >
+                                    <X size={22} />
+                                </button>
+                            </div>
+
+                            {/* Menu */}
+                            <nav className="flex-1 overflow-y-auto">
+                                <ul className="space-y-1">
+                                    {menuItems.map((item, i) => {
+                                        const Icon = item.icon;
+                                        const isDisabled =
+                                            !auth?.user?.organization_id &&
+                                            organizations.length === 0;
+                                        return (
+                                            <li key={i}>
+                                                {isDisabled ? (
+                                                    <div
+                                                        className="flex items-center gap-3 px-3 py-3 text-gray-400 bg-gray-100 rounded-md opacity-60 cursor-not-allowed"
+                                                        title="Access disabled until you join or create an organization"
+                                                    >
+                                                        <Icon size={20} />
+                                                        <span>{item.name}</span>
+                                                    </div>
+                                                ) : (
+                                                    <Link
+                                                        href={item.link}
+                                                        onClick={() => setMobileOpen(false)}
+                                                        className="flex items-center gap-3 px-3 py-3 rounded-md hover:bg-red-600 hover:text-white transition text-gray-800"
+                                                    >
+                                                        <Icon size={20} />
+                                                        <span>{item.name}</span>
+                                                    </Link>
+                                                )}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </nav>
+
+                            {/* User Section */}
+                            <div className="mt-auto border-t pt-3 border-gray-200 space-y-2">
+                                <Link
+                                    href="/profile"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="flex items-center gap-3 px-3 py-3 rounded-md hover:bg-red-600 hover:text-white transition"
+                                >
+                                    <UserCircle size={20} />
+                                    <span>Profile</span>
+                                </Link>
+
+                                <button
+                                    onClick={() => {
+                                        setMobileOpen(false);
+                                        setTimeout(handleLogout, 300);
+                                    }}
+                                    className="flex items-center gap-3 px-3 py-3 rounded-md hover:bg-red-600 hover:text-white transition w-full text-left"
+                                >
+                                    <LogOut size={20} />
+                                    <span>Logout</span>
+                                </button>
+                            </div>
+                        </motion.aside>
+                    </>
+                )}
+            </AnimatePresence>
         </>
     );
 }

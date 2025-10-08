@@ -31,14 +31,12 @@ class ProductController extends Controller
         return Inertia::render('Products/ProductForm', compact('categories'));
     }
 
-    // Fetch subcategories dynamically (AJAX, scoped by org)
     public function getSubcategories(Category $category)
     {
         $this->authorizeCategory($category);
         return response()->json($category->subcategories);
     }
 
-    // Store product
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -46,7 +44,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'subcategory_id' => 'required|exists:sub_categories,id',
+            'subcategory_id' => 'required|exists:subcategories,id',
         ]);
 
         $subcategory = Subcategory::with('category')->findOrFail($data['subcategory_id']);
@@ -57,7 +55,6 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created!');
     }
 
-    // Show edit form
     public function edit(Product $product)
     {
         $product->load('subcategory.category');
@@ -68,7 +65,6 @@ class ProductController extends Controller
         return Inertia::render('Products/ProductForm', compact('product', 'categories'));
     }
 
-    // Update product
     public function update(Request $request, Product $product)
     {
         $product->load('subcategory.category');
@@ -77,7 +73,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'subcategory_id' => 'required|exists:sub_categories,id',
+            'subcategory_id' => 'required|exists:subcategories,id',
         ]);
 
         $subcategory = Subcategory::with('category')->findOrFail($data['subcategory_id']);
@@ -88,7 +84,6 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product updated!');
     }
 
-    // Delete product
     public function destroy(Product $product)
     {
         $product->load('subcategory.category');

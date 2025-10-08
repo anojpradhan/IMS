@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\OrgUserController;
 use App\Http\Controllers\ProductController;
@@ -18,11 +19,15 @@ use Inertia\Inertia;
 Route::get('/', fn() => Inertia::render('Welcome'))->name('welcome');
 
 
-Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/home', fn() => Inertia::render('Home'))->name('home');
+    // Route::get('/dashboard/get-data', [DashboardController::class, 'getData'])
+    //     ->name('dashboard.getData');
+
     // API Routes
     Route::get('/api/roles', [RoleController::class, 'getroles']);
     Route::get('/users', [OrgUserController::class, 'index'])->name('users.index');
