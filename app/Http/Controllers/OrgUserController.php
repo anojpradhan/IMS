@@ -29,7 +29,6 @@ class OrgUserController extends Controller
 
     public function adduser(Request $request)
     {
-        // dd("Hello ");
         $request->validate([
             'user_id' => 'required|integer',
             'role_id' => 'required|integer',
@@ -38,19 +37,16 @@ class OrgUserController extends Controller
         $authUser = Auth::user();
         $organization_id = $authUser->organization_id;
 
-        // Fetch the user you want to add
         $addingUser = User::find($request->user_id);
 
         if (! $addingUser) {
             return back()->with('error', 'User not found.');
         }
 
-        // Check if already assigned to an organization
         if ($addingUser->organization_id) {
             return back()->with('error', 'This user already belongs to an organization.');
         }
 
-        // Assign organization and role
         $addingUser->organization_id = $organization_id;
         $addingUser->role_id = $request->role_id;
         $addingUser->save();
@@ -64,11 +60,14 @@ class OrgUserController extends Controller
     {
         $authUser = Auth::user();
         $organization_id = $authUser->organization_id;
-
         $userToRemove = User::find($id);
 
         if (! $userToRemove) {
             return back()->with('error', 'User not found.');
+        }
+        // no admin deletion
+        if($userToRemove->organization_id===1){
+            return back()->with('error', 'Admin cannot be deleted.');
         }
 
         // Check if user belongs to the same organization

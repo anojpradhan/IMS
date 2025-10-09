@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Sale;
@@ -11,6 +12,7 @@ use App\Models\Supplier;
 use App\Models\Organization;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -23,10 +25,6 @@ class DashboardController extends Controller
         if ($user->organization_id) {
             $organizationId = $user->organization_id;
             $organization = Organization::find($organizationId);
-
-            /**
-             * 🧮 PRODUCT COUNT (via Category → Subcategory → Product)
-             */
             $productCount = Product::whereIn('subcategory_id', function ($query) use ($organizationId) {
                 $query->select('id')
                     ->from('subcategories')
@@ -37,11 +35,9 @@ class DashboardController extends Controller
                     });
             })->count();
 
-            /**
-             * 🥧 PIE CHART: Product distribution by Category
-             */
-            $pieData = Category::where('organization_id', $organizationId)
-                ->select('categories.name as name')
+
+            $pieDataCategory = Category::where('organization_id', $organizationId)
+                ->select('categories.id', 'categories.name')
                 ->selectSub(function ($query) {
                     $query->from('products')
                         ->join('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
@@ -50,9 +46,18 @@ class DashboardController extends Controller
                 }, 'value')
                 ->get();
 
-            /**
-             * 💰 SALES & PURCHASES TOTALS
-             */
+            $pieDataSubcategory = Subcategory::whereIn('category_id', function ($query) use ($organizationId) {
+                $query->select('id')->from('categories')->where('organization_id', $organizationId);
+            })
+                ->select('subcategories.id', 'subcategories.name')
+                ->selectSub(function ($query) {
+                    $query->from('products')
+                        ->whereColumn('products.subcategory_id', 'subcategories.id')
+                        ->selectRaw('COUNT(products.id)');
+                }, 'value')
+                ->get();
+
+
             $salesSummary = [
                 'total_amount' => Sale::where('organization_id', $organizationId)->sum('total_amount'),
                 'remain_amount' => Sale::where('organization_id', $organizationId)->sum('remain_amount'),
@@ -64,44 +69,49 @@ class DashboardController extends Controller
             ];
 
             $supplierCount = Supplier::where('organization_id', $organizationId)->count();
+            $customerCount = Customer::where('organization_id', $organizationId)->count();
+            $minSaleYear = Sale::where('organization_id', $organizationId)->min('sale_date');
+            $minPurchaseYear = Purchase::where('organization_id', $organizationId)->min('purchase_date');
 
-            /**
-             * 📊 BAR CHART: Monthly Totals for Last 3 Years
-             */
+            $earliestDate = Carbon::parse(min($minSaleYear ?? now(), $minPurchaseYear ?? now()));
+            $startYear = $earliestDate->year;
             $currentYear = now()->year;
-            $years = [$currentYear, $currentYear - 1, $currentYear - 2];
-            $barData = [];
 
-            foreach ($years as $year) {
+            $availableYears = range($startYear, $currentYear);
+
+            $barData = [
+                'yearly' => [],
+                '6months' => [],
+                '3months' => [],
+            ];
+
+            foreach ($availableYears as $year) {
                 $monthlyData = [];
-
                 for ($i = 1; $i <= 12; $i++) {
-                    $month = date('M', mktime(0, 0, 0, $i, 10));
+                    $monthName = date('M', mktime(0, 0, 0, $i, 10));
 
-                    // Sales per month
                     $salesTotal = Sale::where('organization_id', $organizationId)
-                        ->whereYear('created_at', $year)
-                        ->whereMonth('created_at', $i)
+                        ->whereYear('sale_date', $year)
+                        ->whereMonth('sale_date', $i)
                         ->sum('total_amount');
 
                     $salesRemain = Sale::where('organization_id', $organizationId)
-                        ->whereYear('created_at', $year)
-                        ->whereMonth('created_at', $i)
+                        ->whereYear('sale_date', $year)
+                        ->whereMonth('sale_date', $i)
                         ->sum('remain_amount');
 
-                    // Purchases per month
                     $purchaseTotal = Purchase::where('organization_id', $organizationId)
-                        ->whereYear('created_at', $year)
-                        ->whereMonth('created_at', $i)
+                        ->whereYear('purchase_date', $year)
+                        ->whereMonth('purchase_date', $i)
                         ->sum('total_amount');
 
                     $purchaseRemain = Purchase::where('organization_id', $organizationId)
-                        ->whereYear('created_at', $year)
-                        ->whereMonth('created_at', $i)
+                        ->whereYear('purchase_date', $year)
+                        ->whereMonth('purchase_date', $i)
                         ->sum('remain_amount');
 
                     $monthlyData[] = [
-                        'month' => $month,
+                        'month' => $monthName,
                         'year' => $year,
                         'sales' => [
                             'total' => $salesTotal,
@@ -116,17 +126,19 @@ class DashboardController extends Controller
                     ];
                 }
 
-                $barData[$year] = $monthlyData;
+                $barData['yearly'][$year] = $monthlyData;
             }
 
-            /**
-             * 🧩 FINAL DASHBOARD STATS
-             */
+            $sixMonthsAgo = now()->subMonths(6);
+            $barData['6months'] = $this->getPeriodData($organizationId, $sixMonthsAgo, now(), 'sale_date', 'purchase_date');
+
+            $threeMonthsAgo = now()->subMonths(3);
+            $barData['3months'] = $this->getPeriodData($organizationId, $threeMonthsAgo, now(), 'sale_date', 'purchase_date');
+
+
             $stats = [
-                [
-                    'label' => 'Products',
-                    'value' => $productCount,
-                ],
+                ['label' => 'Products', 'value' => $productCount],
+                ['label'=>"Customers",'value'=>$customerCount],
                 [
                     'label' => 'Sales',
                     'value' => $salesSummary['total_amount'],
@@ -139,26 +151,75 @@ class DashboardController extends Controller
                     'paid' => $purchaseSummary['total_amount'] - $purchaseSummary['remain_amount'],
                     'remain' => $purchaseSummary['remain_amount'],
                 ],
-                [
-                    'label' => 'Suppliers',
-                    'value' => $supplierCount,
-                ],
+                ['label' => 'Suppliers', 'value' => $supplierCount],
             ];
 
             $organizationData = [
                 'stats' => $stats,
-                'pieData' => $pieData,
+                'pieData' => [
+                    'category' => $pieDataCategory,
+                    'subcategory' => $pieDataSubcategory,
+                ],
                 'barData' => $barData,
-                'availableYears' => $years,
+                'availableYears' => $availableYears,
             ];
         }
 
         return Inertia::render('Dashboard', [
-            'auth' => [
-                'user' => $user,
-            ],
+            'auth' => ['user' => $user],
             'organization' => $organization,
             'organizationData' => $organizationData,
         ]);
+    }
+
+
+    private function getPeriodData($organizationId, $startDate, $endDate, $saleCol, $purchaseCol)
+    {
+        $periodData = [];
+
+        $period = new \DatePeriod(
+            $startDate->copy()->startOfMonth(),
+            \DateInterval::createFromDateString('1 month'),
+            $endDate->copy()->endOfMonth()->addMonth()
+        );
+
+        foreach ($period as $dt) {
+            $dt = Carbon::instance($dt);
+
+            $month = $dt->format('M');
+            $year = $dt->format('Y');
+
+            $salesTotal = Sale::where('organization_id', $organizationId)
+                ->whereBetween($saleCol, [$dt->copy()->startOfMonth(), $dt->copy()->endOfMonth()])
+                ->sum('total_amount');
+
+            $salesRemain = Sale::where('organization_id', $organizationId)
+                ->whereBetween($saleCol, [$dt->copy()->startOfMonth(), $dt->copy()->endOfMonth()])
+                ->sum('remain_amount');
+
+            $purchaseTotal = Purchase::where('organization_id', $organizationId)
+                ->whereBetween($purchaseCol, [$dt->copy()->startOfMonth(), $dt->copy()->endOfMonth()])
+                ->sum('total_amount');
+
+            $purchaseRemain = Purchase::where('organization_id', $organizationId)
+                ->whereBetween($purchaseCol, [$dt->copy()->startOfMonth(), $dt->copy()->endOfMonth()])
+                ->sum('remain_amount');
+
+            $periodData[] = [
+                'month' => $month,
+                'year' => $year,
+                'sales' => [
+                    'total' => $salesTotal,
+                    'paid' => $salesTotal - $salesRemain,
+                    'remain' => $salesRemain,
+                ],
+                'purchases' => [
+                    'total' => $purchaseTotal,
+                    'paid' => $purchaseTotal - $purchaseRemain,
+                    'remain' => $purchaseRemain,
+                ],
+            ];
+        }
+        return $periodData;
     }
 }

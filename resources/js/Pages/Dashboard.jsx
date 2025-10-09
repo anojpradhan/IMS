@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Head, usePage, router } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import AppLayout from "@/Layouts/AppLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -15,18 +15,66 @@ import {
     Tooltip,
     Legend,
 } from "recharts";
-import { Package, Building2, X } from "lucide-react";
+import { Package, Building2, X, ChartPie, BarChart2 } from "lucide-react";
 import { useForm } from "@inertiajs/react";
+import { Button } from "@headlessui/react";
 
 export default function Dashboard() {
     const { auth, organization, organizationData } = usePage().props;
     const user = auth?.user;
 
-    const [amountType, setAmountType] = useState("total_amount"); // total_amount | paid_amount | remaining_amount
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    console.log(organizationData);
+    const [viewBy, setViewBy] = useState("category");
+    const [selectedPeriod, setSelectedPeriod] = useState("yearly");
+    const [selectedYear, setSelectedYear] = useState(
+        organizationData.availableYears[
+            organizationData.availableYears.length - 1
+        ]
+    );
+
     const userName = user?.name || "User";
+    const pieData =
+        organizationData?.pieData?.[viewBy] &&
+        organizationData.pieData[viewBy].length
+            ? organizationData.pieData[viewBy]
+            : [];
+
+    const COLORS = [
+        "#2563EB",
+        "#DC2626",
+        "#16A34A",
+        "#F59E0B",
+        "#9333EA",
+        "#14B8A6",
+        "#8B5CF6",
+    ];
 
     const [showModal, setShowModal] = useState(false);
+
+    const getBarChartData = () => {
+        let data = [];
+
+        if (selectedPeriod === "yearly") {
+            data =
+                organizationData.barData.yearly?.[String(selectedYear)] ||
+                organizationData.barData[String(selectedYear)] ||
+                [];
+        } else if (selectedPeriod === "6months") {
+            data = organizationData.barData["6months"] || [];
+        } else if (selectedPeriod === "3months") {
+            data = organizationData.barData["3months"] || [];
+        }
+
+        return data.map((item) => ({
+            month: item.month,
+            salesTotal: Number(item.sales?.total || 0),
+            purchasesTotal: Number(item.purchases?.total || 0),
+            year: item.year,
+        }));
+    };
+
+    const formattedBarData = getBarChartData();
+
     return (
         <AppLayout>
             <Head title="Dashboard" />
@@ -48,11 +96,10 @@ export default function Dashboard() {
                     </p>
                 </motion.div>
 
-                {/* Organization Exists */}
                 {user?.organization_id && organizationData ? (
                     <>
                         {/* Stats */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-5">
                             {organizationData.stats.map((item, i) => (
                                 <motion.div
                                     key={i}
@@ -68,8 +115,8 @@ export default function Dashboard() {
                                         {item.label}
                                     </p>
 
-                                    {item.label === "Sales" ||
-                                    item.label === "Purchases" ? (
+                                    {(item.label === "Sales" ||
+                                        item.label === "Purchases") && (
                                         <div className="mt-2 text-xs text-gray-500">
                                             <p>
                                                 Paid:{" "}
@@ -84,123 +131,213 @@ export default function Dashboard() {
                                                 </span>
                                             </p>
                                         </div>
-                                    ) : null}
+                                    )}
                                 </motion.div>
                             ))}
                         </div>
 
-                        {/* Charts */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Pie Chart */}
                             <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="bg-white shadow-md rounded-2xl p-6 border"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                                className="bg-white shadow-md rounded-2xl p-6 border flex flex-col gap-4"
                             >
-                                <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                                    Product Distribution by Category
-                                </h3>
-                                <ResponsiveContainer width="100%" height={300}>
-                                    <PieChart>
-                                        <Pie
-                                            data={organizationData.pieData}
-                                            dataKey="value"
-                                            nameKey="name"
-                                            cx="50%"
-                                            cy="50%"
-                                            outerRadius={100}
-                                            labelLine={false}
-                                            label={({ name, percent }) =>
-                                                `${name} ${(
-                                                    percent * 100
-                                                ).toFixed(0)}%`
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                    <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                        <ChartPie className="w-5 h-5 text-blue-600" />
+                                        Product Distribution by{" "}
+                                        {viewBy === "category"
+                                            ? "Category"
+                                            : "Subcategory"}
+                                    </h3>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant={
+                                                viewBy === "category"
+                                                    ? "default"
+                                                    : "outline"
+                                            }
+                                            size="sm"
+                                            className="rounded-full"
+                                            onClick={() =>
+                                                setViewBy("category")
                                             }
                                         >
-                                            {organizationData.pieData.map(
-                                                (entry, index) => (
-                                                    <Cell
-                                                        key={`cell-${index}`}
-                                                        fill={
-                                                            [
-                                                                "#2563EB",
-                                                                "#DC2626",
-                                                                "#16A34A",
-                                                                "#F59E0B",
-                                                                "#9333EA",
-                                                            ][index % 5]
-                                                        }
-                                                        stroke="#fff"
-                                                        strokeWidth={2}
-                                                    />
-                                                )
-                                            )}
-                                        </Pie>
-                                        <Tooltip />
-                                    </PieChart>
-                                </ResponsiveContainer>
+                                            Category
+                                        </Button>
+                                        <Button
+                                            variant={
+                                                viewBy === "subcategory"
+                                                    ? "default"
+                                                    : "outline"
+                                            }
+                                            size="sm"
+                                            className="rounded-full"
+                                            onClick={() =>
+                                                setViewBy("subcategory")
+                                            }
+                                        >
+                                            Subcategory
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                <div className="w-full h-[300px] sm:h-[350px]">
+                                    {pieData.length > 0 ? (
+                                        <ResponsiveContainer
+                                            width="100%"
+                                            height="100%"
+                                        >
+                                            <PieChart>
+                                                <Pie
+                                                    data={pieData}
+                                                    dataKey="value"
+                                                    nameKey="name"
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    outerRadius="50%"
+                                                    labelLine={false}
+                                                    label={({
+                                                        name,
+                                                        percent,
+                                                    }) =>
+                                                        `${name} ${(
+                                                            percent * 100
+                                                        ).toFixed(0)}%`
+                                                    }
+                                                >
+                                                    {pieData.map(
+                                                        (entry, index) => (
+                                                            <Cell
+                                                                key={`cell-${index}`}
+                                                                fill={
+                                                                    COLORS[
+                                                                        index %
+                                                                            COLORS.length
+                                                                    ]
+                                                                }
+                                                                stroke="#fff"
+                                                                strokeWidth={2}
+                                                            />
+                                                        )
+                                                    )}
+                                                </Pie>
+                                                <Tooltip />
+                                                <Legend
+                                                    layout="horizontal"
+                                                    align="center"
+                                                    verticalAlign="bottom"
+                                                    wrapperStyle={{
+                                                        fontSize: "12px",
+                                                    }}
+                                                />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    ) : (
+                                        <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+                                            No data available
+                                        </div>
+                                    )}
+                                </div>
                             </motion.div>
 
-                            {/* Bar Chart */}
+                            {/* barrrchart */}
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.1 }}
                                 className="bg-white shadow-md rounded-2xl p-6 border"
                             >
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-semibold text-gray-700">
-                                        Monthly Sales vs Purchases
-                                    </h3>
-                                    <select
-                                        value={selectedYear}
-                                        onChange={(e) =>
-                                            setSelectedYear(
-                                                parseInt(e.target.value)
-                                            )
-                                        }
-                                        className="border rounded-lg px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
-                                    >
-                                        {organizationData.availableYears.map(
-                                            (year) => (
-                                                <option key={year} value={year}>
-                                                    {year}
-                                                </option>
-                                            )
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2 sm:gap-0">
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                        <BarChart2 className="w-5 h-5 text-blue-600" />
+                                        <h3 className="text-lg font-semibold text-gray-700">
+                                            Monthly Sales vs Purchases
+                                        </h3>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <select
+                                            value={selectedPeriod}
+                                            onChange={(e) =>
+                                                setSelectedPeriod(
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="border rounded-lg px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
+                                        >
+                                            <option value="yearly">
+                                                Yearly
+                                            </option>
+                                            <option value="6months">
+                                                Last 6 Months
+                                            </option>
+                                            <option value="3months">
+                                                Last 3 Months
+                                            </option>
+                                        </select>
+
+                                        {selectedPeriod === "yearly" && (
+                                            <select
+                                                value={selectedYear}
+                                                onChange={(e) =>
+                                                    setSelectedYear(
+                                                        parseInt(e.target.value)
+                                                    )
+                                                }
+                                                className="border rounded-lg px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
+                                            >
+                                                {organizationData.availableYears.map(
+                                                    (year) => (
+                                                        <option
+                                                            key={year}
+                                                            value={year}
+                                                        >
+                                                            {year}
+                                                        </option>
+                                                    )
+                                                )}
+                                            </select>
                                         )}
-                                    </select>
+                                    </div>
                                 </div>
 
-                                <ResponsiveContainer width="100%" height={300}>
-                                    <BarChart
-                                        data={
-                                            organizationData.barData[
-                                                selectedYear
-                                            ]
-                                        }
+                                {/* Bar Chart */}
+                                {formattedBarData.length > 0 ? (
+                                    <ResponsiveContainer
+                                        width="100%"
+                                        height={300}
                                     >
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="month" />
-                                        <YAxis />
-                                        <Tooltip />
-                                        <Legend />
-                                        <Bar
-                                            dataKey="sales.total"
-                                            name="Sales (Total)"
-                                            fill="#2563EB"
-                                            radius={[8, 8, 0, 0]}
-                                        />
-                                        <Bar
-                                            dataKey="purchases.total"
-                                            name="Purchases (Total)"
-                                            fill="#DC2626"
-                                            radius={[8, 8, 0, 0]}
-                                        />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                                        <BarChart data={formattedBarData}>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="month" />
+                                            <YAxis />
+                                            <Tooltip />
+                                            <Legend />
+                                            <Bar
+                                                dataKey="salesTotal"
+                                                name="Sales (Total)"
+                                                fill="#2563EB"
+                                                radius={[8, 8, 0, 0]}
+                                            />
+                                            <Bar
+                                                dataKey="purchasesTotal"
+                                                name="Purchases (Total)"
+                                                fill="#DC2626"
+                                                radius={[8, 8, 0, 0]}
+                                            />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                ) : (
+                                    <div className="flex items-center justify-center h-64 text-gray-500 text-sm">
+                                        No data available
+                                    </div>
+                                )}
                             </motion.div>
                         </div>
 
-                        {/* Manage Organization */}
+                        {/* Manage Organization Button */}
                         <div className="flex justify-center mt-6">
                             <button
                                 onClick={() => setShowModal(true)}
@@ -212,7 +349,7 @@ export default function Dashboard() {
                         </div>
                     </>
                 ) : (
-                    // No organization view (same as before)
+                    // No organization view
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -237,7 +374,7 @@ export default function Dashboard() {
                     </motion.div>
                 )}
 
-                {/* MODAL FORM */}
+                {/* MODAL */}
                 <AnimatePresence>
                     {showModal && (
                         <Modal onClose={() => setShowModal(false)}>
@@ -253,11 +390,9 @@ export default function Dashboard() {
     );
 }
 
-// ------------------ MODAL COMPONENT ------------------
 function Modal({ children, onClose }) {
     const ref = useRef();
 
-    // Close on outside click
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (ref.current && !ref.current.contains(e.target)) {
@@ -269,7 +404,6 @@ function Modal({ children, onClose }) {
             document.removeEventListener("mousedown", handleClickOutside);
     }, [onClose]);
 
-    // Close on ESC
     useEffect(() => {
         const handleEsc = (e) => e.key === "Escape" && onClose();
         window.addEventListener("keydown", handleEsc);
@@ -331,7 +465,6 @@ function OrganizationForm({ organization, onClose }) {
                 {isEdit ? "Edit Organization" : "Create Organization"}
             </h2>
 
-            {/* Name */}
             <div>
                 <label className="block text-gray-700 font-semibold mb-1">
                     Name
@@ -348,7 +481,6 @@ function OrganizationForm({ organization, onClose }) {
                 )}
             </div>
 
-            {/* Phone */}
             <div>
                 <label className="block text-gray-700 font-semibold mb-1">
                     Phone
@@ -365,7 +497,6 @@ function OrganizationForm({ organization, onClose }) {
                 )}
             </div>
 
-            {/* Address */}
             <div>
                 <label className="block text-gray-700 font-semibold mb-1">
                     Address
@@ -384,7 +515,6 @@ function OrganizationForm({ organization, onClose }) {
                 )}
             </div>
 
-            {/* Email */}
             <div>
                 <label className="block text-gray-700 font-semibold mb-1">
                     Email
@@ -401,7 +531,6 @@ function OrganizationForm({ organization, onClose }) {
                 )}
             </div>
 
-            {/* Actions */}
             <div className="flex justify-between items-center pt-4 border-t mt-4">
                 <button
                     type="button"
