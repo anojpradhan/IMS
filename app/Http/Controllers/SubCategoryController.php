@@ -10,10 +10,8 @@ use Inertia\Inertia;
 
 class SubcategoryController extends Controller
 {
-    /**
-     * Helper function to authorize organization ownership.
-     * Checks if the subcategory belongs to a category of the user's org.
-     */
+    
+
     private function authorizeOrg(Subcategory $subcategory)
     {
         $orgId = Auth::user()->organization_id;
