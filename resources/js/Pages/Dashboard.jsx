@@ -26,10 +26,12 @@ export default function Dashboard() {
     console.log(organizationData);
 
     // --- ✅ SAFETY FIXES ---
-    const hasOrgData = !!organizationData && typeof organizationData === "object";
-    const availableYears = hasOrgData && Array.isArray(organizationData.availableYears)
-        ? organizationData.availableYears
-        : [new Date().getFullYear()]; // fallback to current year if null
+    const hasOrgData =
+        !!organizationData && typeof organizationData === "object";
+    const availableYears =
+        hasOrgData && Array.isArray(organizationData.availableYears)
+            ? organizationData.availableYears
+            : [new Date().getFullYear()]; // fallback to current year if null
 
     const [viewBy, setViewBy] = useState("category");
     const [selectedPeriod, setSelectedPeriod] = useState("yearly");

@@ -138,7 +138,7 @@ class DashboardController extends Controller
 
             $stats = [
                 ['label' => 'Products', 'value' => $productCount],
-                ['label'=>"Customers",'value'=>$customerCount],
+                ['label' => "Customers", 'value' => $customerCount],
                 [
                     'label' => 'Sales',
                     'value' => $salesSummary['total_amount'],
