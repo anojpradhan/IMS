@@ -196,13 +196,12 @@ export default function EditSale({ sale: initialSale }) {
                                                             value={p.id}
                                                         >
                                                             {p.name} (Available:{" "}
-                                                            {p.quantity})
+                                                            {p.quantity + item.quantity})
                                                         </option>
                                                     ))}
                                                 </select>
                                             </div>
 
-                                            {/* Quantity */}
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                                                     Quantity
@@ -220,9 +219,19 @@ export default function EditSale({ sale: initialSale }) {
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none"
                                                 />
+                                                {errors[
+                                                    `items.${index}.quantity`
+                                                ] && (
+                                                    <p className="text-red-600 text-sm mt-1">
+                                                        {
+                                                            errors[
+                                                                `items.${index}.quantity`
+                                                            ]
+                                                        }
+                                                    </p>
+                                                )}
                                             </div>
 
-                                            {/* Sale Price */}
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                                                     Sale Price
@@ -243,7 +252,6 @@ export default function EditSale({ sale: initialSale }) {
                                                 />
                                             </div>
 
-                                            {/* Payment Status */}
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                                                     Payment Status
@@ -271,7 +279,6 @@ export default function EditSale({ sale: initialSale }) {
                                                 </select>
                                             </div>
 
-                                            {/* Paid Amount */}
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                                                     Paid Amount
@@ -301,7 +308,6 @@ export default function EditSale({ sale: initialSale }) {
                                                 />
                                             </div>
 
-                                            {/* Remain Amount */}
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                                                     Remain Amount
@@ -327,7 +333,6 @@ export default function EditSale({ sale: initialSale }) {
                             </button>
                         </div>
 
-                        {/* Submit */}
                         <div className="flex flex-wrap justify-end gap-3 pt-6">
                             <Link
                                 href="/sales"

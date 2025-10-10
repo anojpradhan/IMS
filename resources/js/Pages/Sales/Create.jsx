@@ -209,9 +209,19 @@ export default function CreateSale() {
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none"
                                                 />
+                                                {errors[
+                                                    `items.${index}.quantity`
+                                                ] && (
+                                                    <p className="text-red-600 text-sm mt-1">
+                                                        {
+                                                            errors[
+                                                                `items.${index}.quantity`
+                                                            ]
+                                                        }
+                                                    </p>
+                                                )}
                                             </div>
 
-                                            {/* Sale Price */}
                                             <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                                                     Sale Price

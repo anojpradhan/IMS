@@ -30,7 +30,6 @@ export default function Index() {
             <Head title="Sales" />
 
             <div className="flex flex-col gap-4">
-                {/* Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h1 className="text-2xl font-bold text-gray-800">Sales</h1>
                     <Link
@@ -41,7 +40,6 @@ export default function Index() {
                     </Link>
                 </div>
 
-                {/* Sales Table */}
                 <div className="overflow-x-auto bg-white shadow rounded-lg">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-100">
@@ -128,7 +126,6 @@ export default function Index() {
                     </table>
                 </div>
 
-                {/* Pagination */}
                 <div className="mt-4 flex justify-center space-x-2 flex-wrap">
                     {sales.links.map((link, index) => (
                         <span key={index}>
@@ -157,7 +154,6 @@ export default function Index() {
                 </div>
             </div>
 
-            {/* Show Modal */}
             {showModal && currentSale && (
                 <div
                     id="modalOverlay"

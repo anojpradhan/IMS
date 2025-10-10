@@ -24,16 +24,24 @@ export default function Dashboard() {
     const user = auth?.user;
 
     console.log(organizationData);
+
+    // --- ✅ SAFETY FIXES ---
+    const hasOrgData = !!organizationData && typeof organizationData === "object";
+    const availableYears = hasOrgData && Array.isArray(organizationData.availableYears)
+        ? organizationData.availableYears
+        : [new Date().getFullYear()]; // fallback to current year if null
+
     const [viewBy, setViewBy] = useState("category");
     const [selectedPeriod, setSelectedPeriod] = useState("yearly");
     const [selectedYear, setSelectedYear] = useState(
-        organizationData.availableYears[
-            organizationData.availableYears.length - 1
-        ]
+        availableYears[availableYears.length - 1]
     );
 
     const userName = user?.name || "User";
+
+    // ✅ Prevent crash if pieData or barData missing
     const pieData =
+        hasOrgData &&
         organizationData?.pieData?.[viewBy] &&
         organizationData.pieData[viewBy].length
             ? organizationData.pieData[viewBy]
@@ -52,8 +60,9 @@ export default function Dashboard() {
     const [showModal, setShowModal] = useState(false);
 
     const getBarChartData = () => {
-        let data = [];
+        if (!hasOrgData || !organizationData.barData) return [];
 
+        let data = [];
         if (selectedPeriod === "yearly") {
             data =
                 organizationData.barData.yearly?.[String(selectedYear)] ||
@@ -80,7 +89,6 @@ export default function Dashboard() {
             <Head title="Dashboard" />
 
             <div className="p-6 md:p-10 bg-gray-50 min-h-screen flex flex-col gap-8 relative">
-                {/* Welcome */}
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -96,9 +104,8 @@ export default function Dashboard() {
                     </p>
                 </motion.div>
 
-                {user?.organization_id && organizationData ? (
+                {user?.organization_id && hasOrgData ? (
                     <>
-                        {/* Stats */}
                         <div className="grid grid-cols-2 sm:grid-cols-5 gap-5">
                             {organizationData.stats.map((item, i) => (
                                 <motion.div
@@ -159,7 +166,7 @@ export default function Dashboard() {
                                                     : "outline"
                                             }
                                             size="sm"
-                                            className="rounded-full"
+                                            className="rounded-xl px-1 hover:cursor-pointer bg-gray-200 hover:bg-gray-300 text-green-600"
                                             onClick={() =>
                                                 setViewBy("category")
                                             }
@@ -173,7 +180,7 @@ export default function Dashboard() {
                                                     : "outline"
                                             }
                                             size="sm"
-                                            className="rounded-full"
+                                            className="rounded-xl px-1 hover:cursor-pointer bg-gray-200 hover:bg-gray-300 text-green-600"
                                             onClick={() =>
                                                 setViewBy("subcategory")
                                             }
@@ -265,7 +272,7 @@ export default function Dashboard() {
                                                     e.target.value
                                                 )
                                             }
-                                            className="border rounded-lg px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
+                                            className="border rounded-lg px-6 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
                                         >
                                             <option value="yearly">
                                                 Yearly
@@ -286,7 +293,7 @@ export default function Dashboard() {
                                                         parseInt(e.target.value)
                                                     )
                                                 }
-                                                className="border rounded-lg px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
+                                                className="border rounded-lg px-8 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
                                             >
                                                 {organizationData.availableYears.map(
                                                     (year) => (
@@ -357,7 +364,7 @@ export default function Dashboard() {
                     >
                         <Package className="w-16 h-16 text-blue-600 mb-4" />
                         <h1 className="text-3xl md:text-4xl font-bold text-blue-700">
-                            Welcome to InventoryPro
+                            Welcome to LogiTrek
                         </h1>
                         <p className="mt-3 text-gray-600 max-w-lg">
                             Let’s set up your organization to start managing

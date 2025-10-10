@@ -1,9 +1,17 @@
 // resources/js/Layouts/AppLayout.jsx
 import React, { useState, useEffect } from "react";
 import Sidebar from "@/Components/Sidebar";
-import { UserCircle, LogOut, Bell, Search, ChevronDown, Menu } from "lucide-react";
+import {
+    UserCircle,
+    LogOut,
+    Bell,
+    Search,
+    ChevronDown,
+    Menu,
+    Package,
+} from "lucide-react";
 import { router, usePage } from "@inertiajs/react";
-import { motion } from "framer-motion"; 
+import { motion } from "framer-motion";
 
 export default function AppLayout({ children, title }) {
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -126,28 +134,21 @@ export default function AppLayout({ children, title }) {
 
                         {/* Right Section */}
                         <div className="flex items-center gap-4">
-                            <div className="relative">
-                                <Search
-                                    size={18}
-                                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Search..."
-                                    className="w-64 pl-10 pr-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-sm"
-                                />
+                            <div className="relative flex items-center gap-3">
+                                <div className="p-2 bg-blue-600 rounded-lg">
+                                    <Package className="w-6 h-6 text-white" />
+                                </div>
+                                <h1 className="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-600">
+                                    LogiTrek
+                                </h1>
                             </div>
 
-                            <button className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300">
-                                <Bell size={20} />
-                                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
-                            </button>
-
-                            {/* Profile Dropdown */}
                             <div className="relative group">
                                 <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition">
                                     <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
-                                        {auth.user?.name?.charAt(0)?.toUpperCase() || "U"}
+                                        {auth.user?.name
+                                            ?.charAt(0)
+                                            ?.toUpperCase() || "U"}
                                     </div>
                                     <ChevronDown
                                         size={16}
@@ -175,7 +176,6 @@ export default function AppLayout({ children, title }) {
                     </div>
                 </header>
 
-                {/* Main Content */}
                 <main
                     className="flex-1 p-4 md:p-6 lg:p-8"
                     style={{
@@ -185,18 +185,29 @@ export default function AppLayout({ children, title }) {
                     <div className="max-w-7xl mx-auto w-full">{children}</div>
                 </main>
 
-                {/* Footer */}
                 <footer className="bg-white border-t border-gray-200 mt-auto">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row md:items-center md:justify-between">
                         <p className="text-sm text-gray-600 text-center md:text-left">
                             © {new Date().getFullYear()}{" "}
-                            <span className="font-semibold text-blue-600">LogiTrek</span> — Streamlined Inventory Management System
+                            <span className="font-semibold text-blue-600">
+                                LogiTrek
+                            </span>{" "}
+                            — Streamlined Inventory Management System
                         </p>
-                        <div className="mt-2 md:mt-0 flex justify-center md:justify-end gap-4">
-                            <a href="#" className="text-sm text-gray-500 hover:text-gray-700 transition">Privacy</a>
-                            <a href="#" className="text-sm text-gray-500 hover:text-gray-700 transition">Terms</a>
-                            <a href="#" className="text-sm text-gray-500 hover:text-gray-700 transition">Support</a>
-                        </div>
+                        {/* <div className="mt-2 md:mt-0 flex justify-center md:justify-end gap-4">
+                            <a
+                                href="#"
+                                className="text-sm text-gray-500 hover:text-gray-700 transition"
+                            >
+                                Terms
+                            </a>
+                            <a
+                                href="#"
+                                className="text-sm text-gray-500 hover:text-gray-700 transition"
+                            >
+                                Contact
+                            </a>
+                        </div> */}
                     </div>
                 </footer>
             </div>

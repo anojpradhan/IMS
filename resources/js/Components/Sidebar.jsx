@@ -90,16 +90,25 @@ export default function Sidebar() {
                     onClick={() => setIsOpen(!isOpen)}
                     className="absolute -right-3 top-6 bg-red-600 text-white p-1.5 rounded-full shadow-md hover:bg-red-500 transition z-30"
                 >
-                    {isOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+                    {isOpen ? (
+                        <ChevronLeft size={18} />
+                    ) : (
+                        <ChevronRight size={18} />
+                    )}
                 </button>
 
                 {/* Logo */}
-              <div className="flex items-center gap-3 mb-8 mt-2 min-h-[40px] overflow-hidden"    onClick={()=>router.visit('dashboard')}>
+                <div
+                    className="flex items-center gap-3 mb-8 mt-2 min-h-[40px] overflow-hidden"
+                    onClick={() => router.visit("dashboard")}
+                >
                     <motion.div
                         // whileHover={{ scale: 1.05, rotate: 5 }}
                         className="h-10 w-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center font-bold shadow-md text-white flex-shrink-0 hover:cursor-pointer"
                     >
-                        L
+                        <div className="p-2 bg-blue-600 rounded-lg">
+                                        <Package className="w-6 h-6 text-white" />
+                                    </div>
                     </motion.div>
 
                     <AnimatePresence mode="wait">
@@ -110,7 +119,6 @@ export default function Sidebar() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
                                 transition={{ duration: 0.3 }}
-                             
                                 className="text-xl font-bold whitespace-nowrap hover:cursor-pointer"
                             >
                                 LogiTrek
@@ -125,7 +133,8 @@ export default function Sidebar() {
                         {menuItems.map((item, i) => {
                             const Icon = item.icon;
                             const isDisabled =
-                                !auth?.user?.organization_id && organizations.length === 0;
+                                !auth?.user?.organization_id &&
+                                organizations.length === 0;
 
                             return (
                                 <li key={i}>
@@ -150,7 +159,9 @@ export default function Sidebar() {
                                                         initial="closed"
                                                         animate="open"
                                                         exit="closed"
-                                                        transition={{ duration: 0.2 }}
+                                                        transition={{
+                                                            duration: 0.2,
+                                                        }}
                                                     >
                                                         {item.name}
                                                     </motion.span>
@@ -208,10 +219,12 @@ export default function Sidebar() {
                             {/* Header */}
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-2">
-                                    <div className="h-10 w-10 bg-green-600 text-white rounded-md flex items-center justify-center font-bold">
-                                        L
+                                    <div className="p-2 bg-blue-600 rounded-lg">
+                                        <Package className="w-6 h-6 text-white" />
                                     </div>
-                                    <h2 className="text-xl font-bold text-blue-700">LogiTrek</h2>
+                                    <h2 className="text-xl font-bold text-blue-700">
+                                        LogiTrek
+                                    </h2>
                                 </div>
                                 <button
                                     onClick={() => setMobileOpen(false)}
@@ -242,7 +255,9 @@ export default function Sidebar() {
                                                 ) : (
                                                     <Link
                                                         href={item.link}
-                                                        onClick={() => setMobileOpen(false)}
+                                                        onClick={() =>
+                                                            setMobileOpen(false)
+                                                        }
                                                         className="flex items-center gap-3 px-3 py-3 rounded-md hover:bg-red-600 hover:text-white transition text-gray-800"
                                                     >
                                                         <Icon size={20} />

@@ -12,7 +12,6 @@ use Inertia\Inertia;
 
 class SaleController extends Controller
 {
-    // List all sales with items
     public function index()
     {
         $sales = Sale::with(['customer', 'items.product'])
@@ -22,7 +21,6 @@ class SaleController extends Controller
         return Inertia::render('Sales/Index', compact('sales'));
     }
 
-    // Show create form
     public function create()
     {
         $customers = Customer::all();
@@ -30,7 +28,6 @@ class SaleController extends Controller
         return Inertia::render('Sales/Create', compact('customers', 'products'));
     }
 
-    // Store sale
     public function store(Request $request)
     {
         $request->validate([
@@ -41,13 +38,23 @@ class SaleController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.sale_price' => 'required|numeric|min:0',
             'items.*.remain_amount' => 'required|numeric|min:0',
-            'items.*.payment_status' => 'required|string',
             'items.*.paid_amount' => 'required|numeric|min:0',
+            'items.*.payment_status' => 'required|string',
         ]);
 
-        DB::transaction(function() use ($request) {
+        // Check stock
+        foreach ($request->items as $index => $item) {
+            $product = Product::findOrFail($item['product_id']);
+            if ($item['quantity'] > $product->quantity) {
+                return back()->withErrors([
+                    "items.$index.quantity" => "Not enough stock for product: {$product->name}"
+                ])->withInput();
+            }
+        }
+
+        DB::transaction(function () use ($request) {
             $sale = Sale::create([
-                'organization_id' => 1, // Adjust according to auth user
+                'organization_id' => 1,
                 'customer_id' => $request->customer_id,
                 'invoice_number' => 'INV-' . now()->timestamp,
                 'sale_date' => $request->sale_date,
@@ -58,12 +65,6 @@ class SaleController extends Controller
 
             foreach ($request->items as $item) {
                 $product = Product::findOrFail($item['product_id']);
-
-                if ($item['quantity'] > $product->quantity) {
-                    throw new \Exception("Not enough quantity for product: {$product->name}");
-                }
-
-                // Reduce quantity and update latest selling price
                 $product->quantity -= $item['quantity'];
                 $product->selling_price = $item['sale_price'];
                 $product->save();
@@ -83,16 +84,6 @@ class SaleController extends Controller
         return redirect()->route('sales.index')->with('success', 'Sale created successfully!');
     }
 
-    // Show edit form
-    public function edit(Sale $sale)
-    {
-        $sale->load('items.product', 'customer');
-        $customers = Customer::all();
-        $products = Product::all();
-        return Inertia::render('Sales/Edit', compact('sale', 'customers', 'products'));
-    }
-
-    // Update sale
     public function update(Request $request, Sale $sale)
     {
         $request->validate([
@@ -103,11 +94,11 @@ class SaleController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.sale_price' => 'required|numeric|min:0',
             'items.*.remain_amount' => 'required|numeric|min:0',
-            'items.*.payment_status' => 'required|string',
             'items.*.paid_amount' => 'required|numeric|min:0',
+            'items.*.payment_status' => 'required|string',
         ]);
 
-        DB::transaction(function() use ($request, $sale) {
+        DB::transaction(function () use ($request, $sale) {
             // Restore old product quantities
             foreach ($sale->items as $oldItem) {
                 $product = Product::findOrFail($oldItem->product_id);
@@ -115,10 +106,18 @@ class SaleController extends Controller
                 $product->save();
             }
 
-            // Delete old items
+            // Check stock for new items
+            foreach ($request->items as $index => $item) {
+                $product = Product::findOrFail($item['product_id']);
+                if ($item['quantity'] > $product->quantity) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        "items.$index.quantity" => "Not enough stock for product: {$product->name}"
+                    ]);
+                }
+            }
+
             $sale->items()->delete();
 
-            // Update sale
             $sale->update([
                 'customer_id' => $request->customer_id,
                 'sale_date' => $request->sale_date,
@@ -129,12 +128,6 @@ class SaleController extends Controller
 
             foreach ($request->items as $item) {
                 $product = Product::findOrFail($item['product_id']);
-
-                if ($item['quantity'] > $product->quantity) {
-                    throw new \Exception("Not enough quantity for product: {$product->name}");
-                }
-
-                // Reduce quantity and update latest selling price
                 $product->quantity -= $item['quantity'];
                 $product->selling_price = $item['sale_price'];
                 $product->save();
@@ -154,10 +147,20 @@ class SaleController extends Controller
         return redirect()->route('sales.index')->with('success', 'Sale updated successfully!');
     }
 
-    // Delete sale
+
+
+    public function edit(Sale $sale)
+    {
+        $sale->load('items.product', 'customer');
+        $customers = Customer::all();
+        $products = Product::all();
+        return Inertia::render('Sales/Edit', compact('sale', 'customers', 'products'));
+    }
+
+
     public function destroy(Sale $sale)
     {
-        DB::transaction(function() use ($sale) {
+        DB::transaction(function () use ($sale) {
             foreach ($sale->items as $item) {
                 $product = Product::findOrFail($item->product_id);
                 $product->quantity += $item->quantity;

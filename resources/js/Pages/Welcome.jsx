@@ -63,7 +63,7 @@ export default function Home() {
                         <Package className="w-6 h-6 text-white" />
                     </div>
                     <h1 className="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-600">
-                        InventoryPro
+                        LogiTrek
                     </h1>
                 </motion.div>
 
@@ -227,7 +227,7 @@ export default function Home() {
                 className="py-8 border-t border-gray-200 text-center text-sm bg-gray-50 mt-12"
             >
                 <div className="max-w-7xl mx-auto px-6">
-                    <p>© {new Date().getFullYear()} InventoryPro — Advanced Inventory Management System. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} LogiTrek — Advanced Inventory Management System. All rights reserved.</p>
                 </div>
             </motion.footer>
         </div>
