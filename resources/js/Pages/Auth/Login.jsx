@@ -96,12 +96,7 @@ export default function Login({ status, canResetPassword }) {
                             </div>
                         </form>
 
-                        <div className="text-center text-sm text-gray-600 mt-6">
-                            Don't have an account? 
-                            <Link href={route('register')} className="font-medium text-red-600 hover:text-red-800 ml-1">
-                                Register now
-                            </Link>
-                        </div>
+            
                     </div>
                 </div>
 
@@ -115,10 +110,13 @@ export default function Login({ status, canResetPassword }) {
                         <p className="text-lg mb-8 text-gray-700">
                             An intelligent Inventory Management System to track, update, and manage stock effortlessly with real-time updates and predictive analytics.
                         </p>
-                        
-                        <button className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 flex items-center justify-center lg:justify-start mx-auto lg:mx-0" onClick={() => router.visit('/dashboard')}>
-                            Go to Dashboard <i className="fas fa-arrow-right ml-2"></i>
-                        </button>
+                                    <div className=" text-sm text-gray-600 mt-6">
+                            Don't have an account? 
+                            <Link href={route('register')} className="font-medium text-red-600 hover:text-red-800 ml-1">
+                                Register now
+                            </Link>
+                        </div>
+                
                     </div>
                     
                     {/* Decorative elements */}
