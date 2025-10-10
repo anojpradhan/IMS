@@ -25,7 +25,6 @@ export default function Login({ status, canResetPassword }) {
         <>
             <Head title="Log in" />
             <div className="min-h-screen flex flex-col lg:flex-row bg-white">
-                {/* Left Side - Login Form */}
                 <div className="flex-1 flex items-center justify-center px-6 py-12 sm:px-10 order-2 lg:order-1">
                     <div className="w-full max-w-md">
                         {status && (
@@ -100,7 +99,7 @@ export default function Login({ status, canResetPassword }) {
                     </div>
                 </div>
 
-                {/* Right Side - Marketing Content */}
+       
                 <div className="flex-1 bg-gray-100 diagonal-split-right flex items-center justify-end p-10 text-center lg:text-left order-1 lg:order-2 relative">
                     <div className="max-w-lg z-10">
                         <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
