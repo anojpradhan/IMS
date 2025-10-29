@@ -14,14 +14,8 @@ export default function Register() {
         password_confirmation: "",
     });
 
-    const [roles, setRoles] = useState([]);
 
-    useEffect(() => {
-        axios.get("/api/roles").then((res) => {
-            const data = res.data;
-            setRoles(data);
-        });
-    }, []);
+
 
     const submit = (e) => {
         e.preventDefault();
@@ -82,7 +76,7 @@ export default function Register() {
                         <div className="text-sm text-gray-600">
                             Already have an account?
                             <Link
-                                href={route("login")}
+                                href='/login'
                                 className="font-medium text-blue-600 hover:text-blue-800 ml-1"
                             >
                                 Sign in here
@@ -99,7 +93,6 @@ export default function Register() {
                     </div>
                 </div>
 
-                {/* Right Side - Registration Form */}
                 <div className="flex-1 flex items-center justify-center px-6 py-12 sm:px-10 order-2 lg:order-2">
                     <div className="w-full max-w-md">
                         <div className="text-center mb-6">
@@ -207,7 +200,7 @@ export default function Register() {
 
                             <div className="flex items-center justify-between mt-6">
                                 <Link
-                                    href={route("login")}
+                                    href='/login'
                                     className="text-sm text-blue-600 hover:text-blue-800 underline"
                                 >
                                     Already registered?

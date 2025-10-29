@@ -23,9 +23,7 @@ export default function Dashboard() {
     const { auth, organization, organizationData } = usePage().props;
     const user = auth?.user;
 
-    console.log(organizationData);
 
-    // --- ✅ SAFETY FIXES ---
     const hasOrgData =
         !!organizationData && typeof organizationData === "object";
     const availableYears =
@@ -41,7 +39,7 @@ export default function Dashboard() {
 
     const userName = user?.name || "User";
 
-    // ✅ Prevent crash if pieData or barData missing
+    //  Prevent crash if pieData or barData missing
     const pieData =
         hasOrgData &&
         organizationData?.pieData?.[viewBy] &&

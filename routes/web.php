@@ -25,8 +25,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 
 Route::middleware('auth')->group(function () {
-    // Route::get('/dashboard/get-data', [DashboardController::class, 'getData'])
-    //     ->name('dashboard.getData');
+
 
     // API Routes
     Route::get('/api/roles', [RoleController::class, 'getroles']);
