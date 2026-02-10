@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { useForm, usePage, Link, Head } from "@inertiajs/react";
 import AppLayout from "@/Layouts/AppLayout";
+import { useSelector } from "react-redux";
 
 export default function CreateSale() {
-    const { customers, products, errors } = usePage().props;
+    const { products, errors } = usePage().props;
+
+    const customers = useSelector((state) => state.customers.data);
+    console.log("customers from redux", customers);
 
     const { data, setData, post } = useForm({
         customer_id: "",
@@ -39,7 +43,7 @@ export default function CreateSale() {
         } else if (newItems[index].payment_status === "partial") {
             newItems[index].remain_amount = Math.max(
                 0,
-                total - (newItems[index].paid_amount || 0)
+                total - (newItems[index].paid_amount || 0),
             );
         } else {
             newItems[index].paid_amount = 0;
@@ -172,7 +176,7 @@ export default function CreateSale() {
                                                         handleItemChange(
                                                             index,
                                                             "product_id",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none bg-white"
@@ -204,7 +208,7 @@ export default function CreateSale() {
                                                         handleItemChange(
                                                             index,
                                                             "quantity",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -235,7 +239,7 @@ export default function CreateSale() {
                                                         handleItemChange(
                                                             index,
                                                             "sale_price",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -253,7 +257,7 @@ export default function CreateSale() {
                                                         handleItemChange(
                                                             index,
                                                             "payment_status",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none bg-white"
@@ -284,7 +288,7 @@ export default function CreateSale() {
                                                         handleItemChange(
                                                             index,
                                                             "paid_amount",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     disabled={

@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { Head, Link, usePage } from "@inertiajs/react";
 import AppLayout from "@/Layouts/AppLayout";
+import { useSelector } from "react-redux";
 
 export default function Create() {
-    const { suppliers, products, errors } = usePage().props;
+    const { products, errors } = usePage().props;
+    const suppliers = useSelector((state) => state.suppliers.data);
+    console.log("customers from redux", suppliers);
 
     const [items, setItems] = useState([
         {
@@ -201,7 +204,7 @@ export default function Create() {
                                                         handleItemChange(
                                                             index,
                                                             "product_id",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none bg-white"
@@ -244,7 +247,7 @@ export default function Create() {
                                                         handleItemChange(
                                                             index,
                                                             "quantity",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -276,7 +279,7 @@ export default function Create() {
                                                         handleItemChange(
                                                             index,
                                                             "purchase_price",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -305,7 +308,7 @@ export default function Create() {
                                                         handleItemChange(
                                                             index,
                                                             "payment_status",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none bg-white"
@@ -347,7 +350,7 @@ export default function Create() {
                                                         handleItemChange(
                                                             index,
                                                             "paid_amount",
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     disabled={

@@ -68,8 +68,8 @@ class DashboardController extends Controller
                 'remain_amount' => Purchase::where('organization_id', $organizationId)->sum('remain_amount'),
             ];
 
-            $supplierCount = Supplier::where('organization_id', $organizationId)->count();
-            $customerCount = Customer::where('organization_id', $organizationId)->count();
+            // $supplierCount = Supplier::where('organization_id', $organizationId)->count();
+            // $customerCount = Customer::where('organization_id', $organizationId)->count();
             $minSaleYear = Sale::where('organization_id', $organizationId)->min('sale_date');
             $minPurchaseYear = Purchase::where('organization_id', $organizationId)->min('purchase_date');
 
@@ -138,7 +138,7 @@ class DashboardController extends Controller
 
             $stats = [
                 ['label' => 'Products', 'value' => $productCount],
-                ['label' => "Customers", 'value' => $customerCount],
+                // ['label' => "Customers", 'value' => $customerCount],
                 [
                     'label' => 'Sales',
                     'value' => $salesSummary['total_amount'],
@@ -151,7 +151,7 @@ class DashboardController extends Controller
                     'paid' => $purchaseSummary['total_amount'] - $purchaseSummary['remain_amount'],
                     'remain' => $purchaseSummary['remain_amount'],
                 ],
-                ['label' => 'Suppliers', 'value' => $supplierCount],
+                // ['label' => 'Suppliers', 'value' => $supplierCount],
             ];
 
             $organizationData = [

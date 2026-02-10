@@ -18,9 +18,26 @@ import {
 import { Package, Building2, X, ChartPie, BarChart2 } from "lucide-react";
 import { useForm } from "@inertiajs/react";
 import { Button } from "@headlessui/react";
+import { useSelector } from "react-redux";
 
 export default function Dashboard() {
     const { auth, organization, organizationData } = usePage().props;
+    const customers = useSelector((state) => state.customers.data);
+    const suppliers = useSelector((state) => state.suppliers.data);
+    const supplierCount = suppliers.length;
+    const customerCount = customers.length;
+
+    console.log(organizationData.stats);
+
+    const statsWithRedux = React.useMemo(() => {
+        if (!organizationData?.stats) return [];
+
+        return [
+            ...organizationData.stats,
+            { label: "Customers", value: customerCount },
+            { label: "Suppliers", value: supplierCount },
+        ];
+    }, [organizationData, customerCount, supplierCount]);
     const user = auth?.user;
 
     const hasOrgData =
@@ -106,7 +123,7 @@ export default function Dashboard() {
                 {user?.organization_id && hasOrgData ? (
                     <>
                         <div className="grid grid-cols-2 sm:grid-cols-5 gap-5">
-                            {organizationData.stats.map((item, i) => (
+                            {statsWithRedux.map((item, i) => (
                                 <motion.div
                                     key={i}
                                     initial={{ opacity: 0, y: 20 }}

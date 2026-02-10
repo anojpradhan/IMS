@@ -29,10 +29,9 @@ class PurchaseController extends Controller
     {
         $user = Auth::user();
 
-        $suppliers = Supplier::where('organization_id', $user->organization_id)->get();
         $products  = Product::whereHas('subcategory.category', fn($q) => $q->where('organization_id', $user->organization_id))->get();
 
-        return Inertia::render('Purchases/Create', compact('suppliers', 'products'));
+        return Inertia::render('Purchases/Create', compact('products'));
     }
 
     public function store(Request $request)
