@@ -37,10 +37,10 @@ export default function AppLayout({ children, title }) {
             <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0 max-h-screen overflow-y-auto" >
                 {/* 🔹 Mobile Header */}
                 <header
-                    className={` md:hidden sticky top-0 z-20 transition-all duration-300 ${
+                    className={` md:hidden sticky h-fit top-0 z-20 transition-all duration-300 ${
                         isScrolled
                             ? "bg-white shadow-lg border-b border-gray-200"
                             : "bg-blue-700"
@@ -178,9 +178,7 @@ export default function AppLayout({ children, title }) {
 
                 <main
                     className="flex-1 p-4 md:p-6 lg:p-8"
-                    style={{
-                        paddingBottom: "env(safe-area-inset-bottom)",
-                    }}
+              
                 >
                     <div className="max-w-7xl mx-auto w-full">{children}</div>
                 </main>
@@ -194,20 +192,7 @@ export default function AppLayout({ children, title }) {
                             </span>{" "}
                             — Streamlined Inventory Management System
                         </p>
-                        {/* <div className="mt-2 md:mt-0 flex justify-center md:justify-end gap-4">
-                            <a
-                                href="#"
-                                className="text-sm text-gray-500 hover:text-gray-700 transition"
-                            >
-                                Terms
-                            </a>
-                            <a
-                                href="#"
-                                className="text-sm text-gray-500 hover:text-gray-700 transition"
-                            >
-                                Contact
-                            </a>
-                        </div> */}
+                        
                     </div>
                 </footer>
             </div>

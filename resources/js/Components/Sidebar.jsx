@@ -68,7 +68,7 @@ export default function Sidebar() {
     };
 
     return (
-        <>
+        <div className="z-50">
             {/* Mobile menu button */}
             <button
                 onClick={() => setMobileOpen(true)}
@@ -83,7 +83,9 @@ export default function Sidebar() {
                 initial="open"
                 animate={isOpen ? "open" : "closed"}
                 transition={{ duration: 0.3 }}
-                className="hidden md:flex flex-col bg-white text-gray-900 min-h-screen border-r border-gray-200 p-3 relative shadow-sm"
+                className="hidden md:flex flex-col bg-white text-gray-900
+             h-screen sticky top-0
+             border-r border-gray-200 p-3 shadow-sm z-30 w-60"
             >
                 {/* Toggle Button */}
                 <button
@@ -107,8 +109,8 @@ export default function Sidebar() {
                         className="h-10 w-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center font-bold shadow-md text-white flex-shrink-0 hover:cursor-pointer"
                     >
                         <div className="p-2 bg-blue-600 rounded-lg">
-                                        <Package className="w-6 h-6 text-white" />
-                                    </div>
+                            <Package className="w-6 h-6 text-white" />
+                        </div>
                     </motion.div>
 
                     <AnimatePresence mode="wait">
@@ -296,6 +298,6 @@ export default function Sidebar() {
                     </>
                 )}
             </AnimatePresence>
-        </>
+        </div>
     );
 }

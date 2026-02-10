@@ -7,6 +7,7 @@ use App\Models\SaleItem;
 use App\Models\Product;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -14,7 +15,10 @@ class SaleController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
         $sales = Sale::with(['customer', 'items.product'])
+            ->where('organization_id', $user->organization_id)
             ->latest()
             ->paginate(10);
 
