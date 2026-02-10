@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 export default function Create() {
     const { products, errors } = usePage().props;
     const suppliers = useSelector((state) => state.suppliers.data);
-    console.log("customers from redux", suppliers);
+    console.log("suppliers from redux", suppliers);
 
     const [items, setItems] = useState([
         {

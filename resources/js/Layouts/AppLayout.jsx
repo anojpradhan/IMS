@@ -24,8 +24,6 @@ export default function AppLayout({ children, title }) {
         dispatch(fetchSuppliers());
     }, []);
 
-
-
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const { auth } = usePage().props;
