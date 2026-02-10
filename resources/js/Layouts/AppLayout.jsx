@@ -12,8 +12,20 @@ import {
 } from "lucide-react";
 import { router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCustomers } from "@/store/slices/customerSlice";
+import { fetchSuppliers } from "@/store/slices/supplierSlice";
 
 export default function AppLayout({ children, title }) {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(fetchCustomers());
+        dispatch(fetchSuppliers());
+    }, []);
+
+
+
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const { auth } = usePage().props;
@@ -37,7 +49,7 @@ export default function AppLayout({ children, title }) {
             <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col min-w-0 max-h-screen overflow-y-auto" >
+            <div className="flex-1 flex flex-col min-w-0 max-h-screen overflow-y-auto">
                 {/* 🔹 Mobile Header */}
                 <header
                     className={` md:hidden sticky h-fit top-0 z-20 transition-all duration-300 ${
@@ -176,10 +188,7 @@ export default function AppLayout({ children, title }) {
                     </div>
                 </header>
 
-                <main
-                    className="flex-1 p-4 md:p-6 lg:p-8"
-              
-                >
+                <main className="flex-1 p-4 md:p-6 lg:p-8">
                     <div className="max-w-7xl mx-auto w-full">{children}</div>
                 </main>
 
@@ -192,7 +201,6 @@ export default function AppLayout({ children, title }) {
                             </span>{" "}
                             — Streamlined Inventory Management System
                         </p>
-                        
                     </div>
                 </footer>
             </div>

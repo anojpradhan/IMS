@@ -104,4 +104,12 @@ class SupplierController extends Controller
 
         return redirect()->route('suppliers.index')->with('success', 'Supplier deleted successfully');
     }
+
+    // for react redux api 
+    public function apiIndex()
+    {
+        return Supplier::where('organization_id', Auth::user()->organization_id)
+            ->latest()
+            ->get();
+    }
 }

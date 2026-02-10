@@ -27,6 +27,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::middleware('auth')->group(function () {
 
 
+
     // API Routes
     Route::get('/api/roles', [RoleController::class, 'getroles']);
     Route::get('/users', [OrgUserController::class, 'index'])->name('users.index');
@@ -72,6 +73,10 @@ Route::middleware('auth')->group(function () {
         'customers' => CustomerController::class,
         'sales' => SaleController::class,
     ]);
+
+    // for react redux api calling 
+    Route::get('/api/customers', [CustomerController::class, 'apiIndex']);
+    Route::get('/api/suppliers', [SupplierController::class, 'apiIndex']);
 });
 
 require __DIR__ . '/auth.php';

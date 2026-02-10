@@ -9,9 +9,7 @@ use Inertia\Inertia;
 
 class CustomerController extends Controller
 {
-    /**
-     * Helper to authorize organization ownership.
-     */
+
     private function authorizeOrg($model)
     {
         if ($model->organization_id !== Auth::user()->organization_id) {
@@ -19,9 +17,6 @@ class CustomerController extends Controller
         }
     }
 
-    /**
-     * Display a listing of the customers for the user's organization.
-     */
     public function index()
     {
         $customers = Customer::where('organization_id', Auth::user()->organization_id)
@@ -32,18 +27,11 @@ class CustomerController extends Controller
             'customers' => $customers,
         ]);
     }
-
-    /**
-     * Show the form for creating a new customer.
-     */
     public function create()
     {
         return Inertia::render('Customers/Create');
     }
 
-    /**
-     * Store a newly created customer in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -61,9 +49,6 @@ class CustomerController extends Controller
         return redirect()->route('customers.index')->with('success', 'Customer created successfully');
     }
 
-    /**
-     * Show the form for editing the specified customer.
-     */
     public function edit(Customer $customer)
     {
         $this->authorizeOrg($customer);
@@ -73,9 +58,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified customer in storage.
-     */
     public function update(Request $request, Customer $customer)
     {
         $this->authorizeOrg($customer);
@@ -93,9 +75,6 @@ class CustomerController extends Controller
         return redirect()->route('customers.index')->with('success', 'Customer updated successfully');
     }
 
-    /**
-     * Remove the specified customer from storage.
-     */
     public function destroy(Customer $customer)
     {
         $this->authorizeOrg($customer);
@@ -103,5 +82,13 @@ class CustomerController extends Controller
         $customer->delete();
 
         return redirect()->route('customers.index')->with('success', 'Customer deleted successfully');
+    }
+
+    // for react redux api 
+    public function apiIndex()
+    {
+        return Customer::where('organization_id', Auth::user()->organization_id)
+            ->latest()
+            ->get();
     }
 }
