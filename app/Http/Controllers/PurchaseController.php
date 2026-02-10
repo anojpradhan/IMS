@@ -123,7 +123,6 @@ class PurchaseController extends Controller
         return redirect()->route('purchases.index')->with('success', 'Purchase deleted successfully.');
     }
 
-    /* ------------------ Helper Methods ------------------ */
 
     private function validatePurchase(Request $request)
     {

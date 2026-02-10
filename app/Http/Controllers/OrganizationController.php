@@ -47,7 +47,7 @@ class OrganizationController extends Controller
         $user->role_id = 1; // admin
         $user->save();
 
-        return redirect()->route('dashboard')->with('success', 'Organization created successfully! 🚀');
+        return redirect()->route('dashboard')->with('success', 'Organization created successfully!');
     }
 
 
@@ -74,7 +74,7 @@ class OrganizationController extends Controller
             'email'   => $request->email,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Organization updated successfully! ✅');
+        return redirect()->route('dashboard')->with('success', 'Organization updated successfully!');
     }
 
     public function destroy()
@@ -90,6 +90,6 @@ class OrganizationController extends Controller
             $user->save();
         }
 
-        return redirect()->route('dashboard')->with('success', 'Organization deleted successfully! 🗑️');
+        return redirect()->route('dashboard')->with('success', 'Organization deleted successfully!');
     }
 }
