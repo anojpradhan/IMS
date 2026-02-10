@@ -23,7 +23,6 @@ export default function Dashboard() {
     const { auth, organization, organizationData } = usePage().props;
     const user = auth?.user;
 
-
     const hasOrgData =
         !!organizationData && typeof organizationData === "object";
     const availableYears =
@@ -34,7 +33,7 @@ export default function Dashboard() {
     const [viewBy, setViewBy] = useState("category");
     const [selectedPeriod, setSelectedPeriod] = useState("yearly");
     const [selectedYear, setSelectedYear] = useState(
-        availableYears[availableYears.length - 1]
+        availableYears[availableYears.length - 1],
     );
 
     const userName = user?.name || "User";
@@ -95,7 +94,7 @@ export default function Dashboard() {
                     className="bg-white shadow-lg rounded-2xl p-6 border-t-4 border-blue-600"
                 >
                     <h2 className="text-2xl font-bold text-blue-700">
-                        Welcome, {userName} 👋
+                        Welcome, {userName}
                     </h2>
                     <p className="text-gray-600 mt-1">
                         {user?.organization_id
@@ -227,7 +226,7 @@ export default function Dashboard() {
                                                                 stroke="#fff"
                                                                 strokeWidth={2}
                                                             />
-                                                        )
+                                                        ),
                                                     )}
                                                 </Pie>
                                                 <Tooltip />
@@ -269,7 +268,7 @@ export default function Dashboard() {
                                             value={selectedPeriod}
                                             onChange={(e) =>
                                                 setSelectedPeriod(
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             className="border rounded-lg px-6 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
@@ -290,7 +289,9 @@ export default function Dashboard() {
                                                 value={selectedYear}
                                                 onChange={(e) =>
                                                     setSelectedYear(
-                                                        parseInt(e.target.value)
+                                                        parseInt(
+                                                            e.target.value,
+                                                        ),
                                                     )
                                                 }
                                                 className="border rounded-lg px-8 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
@@ -303,7 +304,7 @@ export default function Dashboard() {
                                                         >
                                                             {year}
                                                         </option>
-                                                    )
+                                                    ),
                                                 )}
                                             </select>
                                         )}

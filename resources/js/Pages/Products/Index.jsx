@@ -77,7 +77,7 @@ export default function Index({ products }) {
                                             <Link
                                                 href={route(
                                                     "products.edit",
-                                                    product.id
+                                                    product.id,
                                                 )}
                                                 className="text-green-600 hover:text-green-800 font-medium"
                                             >

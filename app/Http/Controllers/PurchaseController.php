@@ -19,7 +19,8 @@ class PurchaseController extends Controller
         $purchases = Purchase::with('items.product', 'supplier')
             ->where('organization_id', $user->organization_id)
             ->orderBy('purchase_date', 'desc')
-            ->get();
+            ->latest()
+            ->paginate(10);
 
         return Inertia::render('Purchases/Index', compact('purchases'));
     }

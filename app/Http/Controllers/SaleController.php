@@ -19,6 +19,7 @@ class SaleController extends Controller
 
         $sales = Sale::with(['customer', 'items.product'])
             ->where('organization_id', $user->organization_id)
+            ->orderBy('sale_date', 'desc')
             ->latest()
             ->paginate(10);
 
