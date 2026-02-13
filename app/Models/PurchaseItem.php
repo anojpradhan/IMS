@@ -18,11 +18,15 @@ class PurchaseItem extends Model
     ];
 
     // Relationships
+
+    // belongings to whihc purchase 
     public function purchase()
     {
         return $this->belongsTo(Purchase::class);
     }
 
+
+    // products inn items 
     public function product()
     {
         return $this->belongsTo(Product::class);

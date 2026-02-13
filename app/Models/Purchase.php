@@ -22,15 +22,20 @@ class Purchase extends Model
     ];
 
     // Relationships
+
+    // supplier of purchase 
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
     }
 
+    // organization related with this purchase 
     public function organization()
     {
         return $this->belongsTo(Organization::class);
     }
+
+    // items in the purchases 
     public function items()
     {
         return $this->hasMany(PurchaseItem::class);
