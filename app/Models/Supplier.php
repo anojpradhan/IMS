@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Supplier extends Model
 {
-        protected $fillable = [
+    protected $fillable = [
         'organization_id',
         'name',
         'contact_person',
@@ -16,10 +16,14 @@ class Supplier extends Model
     ];
 
     // Relationships
+
+    // which org suppliers is with 
     public function organization()
     {
         return $this->belongsTo(Organization::class);
     }
+
+    //  purchase which with it is related 
     public function purchases()
     {
         return $this->hasMany(Supplier::class);

@@ -37,10 +37,10 @@ export default function ProfileEdit({ auth }) {
     const hours = new Date().getHours();
     const greeting =
         hours < 12
-            ? "Good Morning 🌅"
+            ? "Good Morning "
             : hours < 18
-            ? "Good Afternoon ☀️"
-            : "Good Evening 🌙";
+            ? "Good Afternoon "
+            : "Good Evening ";
 
     return (
         <AppLayout>

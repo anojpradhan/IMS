@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm, Link, Head } from "@inertiajs/react";
-import AppLayout from "@/Layouts/AppLayout"; // assuming you already have this
+import AppLayout from "@/Layouts/AppLayout"; 
 
 export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
