@@ -11,9 +11,7 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    /**
-     * Show the user profile page.
-     */
+
     public function edit(Request $request): Response
     {
         return Inertia::render('Auth/Profile', [
@@ -23,9 +21,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
+
     public function update(Request $request)
     {
         $user = $request->user();
@@ -56,9 +52,7 @@ class ProfileController extends Controller
         return back()->with('success', 'Profile updated successfully!');
     }
 
-    /**
-     * Delete the user's account.
-     */
+
     public function destroy(Request $request)
     {
         $user = $request->user();
