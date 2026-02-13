@@ -9,26 +9,20 @@ class Role extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     */
     protected $fillable = [
         'organization_id',
         'name',
         'description',
     ];
 
-    /**
-     * Relationship: Role belongs to an Organization
-     */
+
+    // related to orgs 
     public function organization()
     {
         return $this->belongsTo(Organization::class);
     }
 
-    /**
-     * Relationship: Role has many Users
-     */
+    // user with role 
     public function users()
     {
         return $this->hasMany(User::class);
