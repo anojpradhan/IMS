@@ -15,13 +15,12 @@ class Customer extends Model
         'address',
     ];
 
-    /**
-     * Get the organization that owns the customer.
-     */
+    // organization relationships
     public function organization()
     {
         return $this->belongsTo(Organization::class);
     }
+    // sales relationships
     public function sales()
     {
         return $this->hasMany(Sale::class);

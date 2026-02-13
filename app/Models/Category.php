@@ -14,6 +14,7 @@ class Category extends Model
         'created_at',
     ];
 
+    // sub category relationships
     public function subcategories()
     {
         return $this->hasMany(Subcategory::class);
