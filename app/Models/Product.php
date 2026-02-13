@@ -20,14 +20,18 @@ class Product extends Model
         'quantity',
     ];
 
+    // subcategories 
     public function subcategory()
     {
         return $this->belongsTo(Subcategory::class, 'subcategory_id');
     }
+
+    // purchased items in each purchases 
     public function purchaseItems()
     {
         return $this->hasMany(PurchaseItem::class);
     }
+    // sales items in each sales 
     public function salesItems()
     {
         return $this->hasMany(SaleItem::class);
